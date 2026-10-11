@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -6,7 +6,6 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import * as THREE from 'three'
 import { Scene } from '../three/Scene'
 import { CORRIDOR } from '../three/config'
-import { Nav } from './Nav'
 import { navSections } from '../../data/restaurant'
 import {
   resetScroll,
@@ -14,7 +13,6 @@ import {
   smoothScrollStep,
   updatePointer,
 } from '../../lib/scroll'
-import { setSectionHandler } from '../../lib/nav'
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
@@ -26,11 +24,10 @@ interface ThreeSiteProps {
 
 const COUNT = navSections.length
 
-export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
+export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const curtainRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
-  const [active, setActive] = useState(0)
   const dpr = quality === 'full' ? 1.8 : 1.25
 
   // Scroll -> journey progress
@@ -50,8 +47,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
         if (progressRef.current) {
           progressRef.current.style.transform = `scaleY(${self.progress})`
         }
-        const idx = Math.round(self.progress * (COUNT - 1))
-        setActive((prev) => (prev === idx ? prev : idx))
       },
     })
 
@@ -127,22 +122,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
     return () => gsap.ticker.remove(tick)
   }, [])
 
-  // Section navigation
-  useEffect(() => {
-    setSectionHandler((id) => {
-      const i = navSections.findIndex((s) => s.id === id)
-      if (i < 0) return
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      gsap.to(window, {
-        scrollTo: (i / (COUNT - 1)) * max,
-        duration: 0.9,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      })
-    })
-    return () => setSectionHandler(null)
-  }, [])
-
   return (
     <>
       <div className="scene-canvas">
@@ -168,13 +147,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
         <Scene quality={quality} reduced={reduced} />
         </Canvas>
       </div>
-
-      <Nav
-        active={active}
-        canRender3D
-        show3D
-        onToggle={onExit}
-      />
 
       <div
         className="scroll-track"
