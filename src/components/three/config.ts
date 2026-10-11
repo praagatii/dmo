@@ -17,11 +17,11 @@ export const CORRIDOR = {
   /**
    * Forward travel. The single background plane sits at z = -40 and fills
    * the viewport at the start camera (z = 0). Advancing to cameraEndZ dolls
-   * in toward the image at a gentle ~1.5x zoom. Kept shallow so the
-   * depth-displaced foreground never looms into the camera (which is what
-   * made the image look distorted).
+   * in toward the image: at full scroll the plane is (40/16) = 2.5x screen
+   * width, a pronounced walk-in zoom. Depth relief is mild (DEPTH.amplitude
+   * 3.5) so the enlarged foreground stays clean.
    */
-  cameraEndZ: -14,
+  cameraEndZ: -24,
   nearPlane: 0.1,
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */
