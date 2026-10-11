@@ -1,16 +1,11 @@
 /**
- * Geometry for the layered (multiplane) corridor reconstruction.
+ * Geometry for the single-image corridor background.
  *
- * The experience is a stack of full-frame image planes, all sharing the
- * master image's 1672x941 aspect and its vanishing point at the frame
- * centre. Every plane is sized so that, from the start camera position,
- * it exactly fills the viewport — which means the starting composite is
- * pixel-identical to the master "Golden Heritage Hallway" reference.
- *
- * As the camera travels forward (z from 0 to cameraEndZ), near planes
- * grow much faster than far ones, so the foreground arch passes out of
- * view while the door slowly grows ahead — a deterministic function of
- * scroll progress (see CameraRig).
+ * The scene shows one full-frame image on one plane, centred on the camera
+ * axis and parallel to the viewport. The plane is sized so that from the
+ * start camera (z = 0) it exactly fills the window, edge to edge. Scrolling
+ * moves the camera forward along -Z, so the image smoothly enlarges — a
+ * deterministic walk-in zoom driven by scroll progress (see CameraRig).
  */
 export const CORRIDOR = {
   /** Vertical field of view matching the master image's proportions. */
@@ -20,15 +15,13 @@ export const CORRIDOR = {
   /** Camera starts level at the vanishing point height (0). */
   cameraStartZ: 0,
   /**
-   * Forward travel. The supplied layers are single-viewpoint crops placed on
-   * parallel planes: the initial frame reproduces the reference exactly at
-   * cameraStartZ, but re-projecting *perspective-baked* art through a moving
-   * camera only stays believable while the dolly is small relative to the
-   * nearest plane. The nearest plane sits at z = -40, so travel is capped at
-   * 30% of that distance; a larger dolly balloons the near planes and shears
-   * surfaces (the "floating carpet" / oversized plants failure mode).
+   * Forward travel. The single background plane sits at z = -40 and fills
+   * the viewport at the start camera (z = 0). Advancing to cameraEndZ dolls
+   * in toward the image: at full scroll the plane is (40/16) = 2.5x screen
+   * width, giving a pronounced walk-in zoom. The camera always stays well
+   * in front of the plane.
    */
-  cameraEndZ: -12,
+  cameraEndZ: -24,
   nearPlane: 0.1,
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */
