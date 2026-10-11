@@ -9,9 +9,9 @@ interface LoaderProps {
   onDone: () => void
 }
 
-/** The clip's flat teal-green slate, keyed out so the hero shows through. */
-const KEY: [number, number, number] = [19 / 255, 64 / 255, 59 / 255]
-const TOL = 0.1
+/** The clip's flat white slate, keyed out so the hero shows through. */
+const KEY: [number, number, number] = [253 / 255, 253 / 255, 253 / 255]
+const TOL = 0.12
 const SOFT = 0.08
 
 const VERT = `
@@ -61,10 +61,10 @@ function buildProgram(gl: WebGLRenderingContext) {
 }
 
 /**
- * Full-screen loading screen. loading.mp4 is held on its first frame while
- * the hero loads, then played once. The clip's flat teal-green slate is
- * chroma-keyed out in a WebGL shader, so the overlay is transparent and the
- * hero is visible from the very first frame.
+ * Full-screen loading screen. newloading.mp4 is held on its first frame while
+ * the hero loads, then played once. The clip's flat white slate is keyed out
+ * in a WebGL shader, so the overlay is transparent and the hero is visible
+ * from the very first frame.
  */
 export function Loader({ ready, reduced, onDone }: LoaderProps) {
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -191,7 +191,7 @@ export function Loader({ ready, reduced, onDone }: LoaderProps) {
       <video
         ref={videoRef}
         className="loader__video"
-        src="/loading.mp4"
+        src="/newloading.mp4"
         muted
         playsInline
         preload="auto"
