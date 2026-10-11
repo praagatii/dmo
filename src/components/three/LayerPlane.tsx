@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import { CORRIDOR, PALETTE } from './config'
+import { useThree } from '@react-three/fiber'
+import { CORRIDOR } from './config'
 
 interface LayerPlaneProps {
   texture: THREE.Texture
@@ -9,24 +10,23 @@ interface LayerPlaneProps {
 }
 
 /**
- * One full-frame image plane of the multiplane corridor.
- *
- * Sized so that from the start camera (z = 0) it fills the viewport
- * exactly; every plane shares the master's vanishing point and image
- * aspect, so the depths are correct by construction.
- *
- * The supplied layers carry a genuine alpha channel (re-audit: no baked
- * checkerboard). The shader reads the real alpha, writes premultiplied
- * colour, and uses `renderOrder = z` so the painter's order matches the
- * depth stack during the forward camera travel.
+ * One full-frame image plane sized to always cover the viewport from the
+ * start camera. The height matches the vertical frustum at the plane depth;
+ * the width is widened to the larger of the image aspect and the actual
+ * canvas aspect, so the image fills the window edge-to-edge on any screen
+ * (standard "cover" behaviour — cropping is determined by the window, not
+ * by the image).
  */
 export function LayerPlane({ texture, z, opacity = 1 }: LayerPlaneProps) {
+  const size = useThree((s) => s.size)
+  const canvasAspect = size.width / size.height
+
   const dims = useMemo(() => {
     const dist = CORRIDOR.cameraStartZ - z
     const h = CORRIDOR.viewScale * dist
-    const w = h * CORRIDOR.imageAspect
+    const w = h * Math.max(CORRIDOR.imageAspect, canvasAspect)
     return { w, h }
-  }, [z])
+  }, [z, canvasAspect])
 
   const material = useMemo(() => {
     const mat = new THREE.ShaderMaterial({
@@ -49,7 +49,7 @@ export function LayerPlane({ texture, z, opacity = 1 }: LayerPlaneProps) {
           vec4 t = texture2D(uMap, vUv);
           float a = t.a * uOpacity;
           if (a < 0.001) discard;
-          gl_FragColor = vec4(t.rgb * a, a);
+          gl_FragColor = vec4(t.rgb, a);
         }
       `,
     })
@@ -70,20 +70,4 @@ export function LayerPlane({ texture, z, opacity = 1 }: LayerPlaneProps) {
       )}
     />
   )
-}
-
-export function CorridorBackdrop() {
-  const geo = useMemo(() => {
-    const h = CORRIDOR.viewScale * 360 * 1.6
-    const w = h * CORRIDOR.imageAspect
-    return new THREE.PlaneGeometry(w, h)
-  }, [])
-  const mat = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color: PALETTE.background,
-      }),
-    [],
-  )
-  return <mesh position={[0, 0, -360]} material={mat} geometry={geo} />
 }
