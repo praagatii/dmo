@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useLayoutEffect } from 'react'
 import * as THREE from 'three'
 import { useLoader } from '@react-three/fiber'
 import { LAYERS } from '../../data/layers'
@@ -9,32 +9,24 @@ interface CorridorLayersProps {
 }
 
 /**
- * The corridor background. It renders the single full reference image on one
- * plane sized so that, from the start camera, it fills the viewport exactly.
- * As the camera advances the plane grows, giving a gentle walk-in zoom.
+ * The hero backdrop: the hallway image displaced by its matching depth map,
+ * so scroll and cursor become real moves through 3D geometry.
  */
-export function CorridorLayers({ quality }: CorridorLayersProps) {
-  const textures = useLoader(THREE.TextureLoader, LAYERS.map((l) => l.file))
+export function CorridorLayers(_props: CorridorLayersProps) {
+  const layer = LAYERS[0]
+  const [color, depth] = useLoader(THREE.TextureLoader, [
+    layer.file,
+    layer.depth,
+  ])
 
-  const srgbTextures = useMemo(() => {
-    textures.forEach((t) => {
-      t.colorSpace = THREE.SRGBColorSpace
-      t.anisotropy = 4
-      t.needsUpdate = true
-    })
-    return textures
-  }, [textures])
+  // Colour-manage only the colour map: sRGB decode so the standard shader
+  // pipeline re-encodes it to a byte-exact image (the depth map is only
+  // sampled for geometry, never displayed).
+  useLayoutEffect(() => {
+    color.colorSpace = THREE.SRGBColorSpace
+    color.anisotropy = 4
+    color.needsUpdate = true
+  }, [color])
 
-  const visible = quality === 'full' ? LAYERS : LAYERS.filter((l) => l.id !== 'L12')
-
-  return (
-    <group>
-      {visible.map((layer) => {
-        const index = LAYERS.indexOf(layer)
-        return (
-          <LayerPlane key={layer.id} texture={srgbTextures[index]} z={layer.z} />
-        )
-      })}
-    </group>
-  )
+  return <LayerPlane texture={color} depthTexture={depth} z={layer.z} />
 }

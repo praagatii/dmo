@@ -51,3 +51,24 @@ export const PARALLAX = {
   /** How much the camera gaze steers with the cursor (0 = eyes straight). */
   look: 0.5,
 }
+
+/**
+ * Depth-map displacement. The background plane is rebuilt as a fine grid and
+ * each vertex is pushed toward the camera (positive z) by its depth value, so
+ * white (near) parts of the corridor stand proud and dark (far) parts recede.
+ * The hallway image is mapped onto the same surface, giving true per-pixel
+ * parallax under the cursor and the scroll dolly.
+ */
+export const DEPTH = {
+  /** Base depth of the backdrop grid (world z). */
+  planeZ: -40,
+  /**
+   * How far (world units) the nearest depth value (white) is pulled from the
+   * base toward the camera. Far geometry stays at planeZ.
+   */
+  amplitude: 9,
+  /** Grid segments across the image width (height is derived from aspect). */
+  segments: 192,
+  /** Resolution at which the depth map is sampled to build geometry. */
+  grid: 256,
+}

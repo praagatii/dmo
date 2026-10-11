@@ -9,8 +9,10 @@
 export interface LayerDef {
   /** Layer id. */
   id: string
-  /** Public URL of the image file. */
+  /** Public URL of the colour image. */
   file: string
+  /** Public URL of the matching monochrome depth map (white = near). */
+  depth: string
   /** What the layer depicts. */
   role: string
   /** World-space depth. Camera starts at z = CORRIDOR.cameraStartZ (0). */
@@ -23,7 +25,8 @@ export const LAYERS: LayerDef[] = [
   {
     id: 'BG',
     file: '/layers/golden-heritage-hallway.png',
-    role: 'Golden Heritage Hallway (single reference image)',
+    depth: '/Monochrome Depth-Mapped Corridor.png',
+    role: 'Golden Heritage Hallway (single image displaced by its depth map)',
     z: -40,
     source: 'golden-heritage-hallway.png',
   },
