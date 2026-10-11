@@ -48,8 +48,6 @@ export const PARALLAX = {
    * camera can pan without ever exposing a gap at the edges.
    */
   margin: 1.12,
-  /** How much the camera gaze steers with the cursor (0 = eyes straight). */
-  look: 0.5,
 }
 
 /**
