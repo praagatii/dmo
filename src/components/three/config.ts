@@ -17,11 +17,11 @@ export const CORRIDOR = {
   /**
    * Forward travel. The single background plane sits at z = -40 and fills
    * the viewport at the start camera (z = 0). Advancing to cameraEndZ dolls
-   * in toward the image: at full scroll the plane is (40/16) = 2.5x screen
-   * width, giving a pronounced walk-in zoom. The camera always stays well
-   * in front of the plane.
+   * in toward the image at a gentle ~1.5x zoom. Kept shallow so the
+   * depth-displaced foreground never looms into the camera (which is what
+   * made the image look distorted).
    */
-  cameraEndZ: -24,
+  cameraEndZ: -14,
   nearPlane: 0.1,
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */
@@ -64,9 +64,11 @@ export const DEPTH = {
   planeZ: -40,
   /**
    * How far (world units) the nearest depth value (white) is pulled from the
-   * base toward the camera. Far geometry stays at planeZ.
+   * base toward the camera. Kept small: enough relief for the hallway to
+   * parallax convincingly as the cursor moves, without re-projecting the
+   * image so far it warps the flat reference look.
    */
-  amplitude: 9,
+  amplitude: 3.5,
   /** Grid segments across the image width (height is derived from aspect). */
   segments: 192,
   /** Resolution at which the depth map is sampled to build geometry. */
