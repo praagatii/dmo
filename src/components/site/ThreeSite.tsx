@@ -19,6 +19,10 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 interface ThreeSiteProps {
   quality: 'full' | 'lite'
   reduced: boolean
+  /** Play the opening once the loading video has finished. */
+  active: boolean
+  /** Fired once the hero scene has loaded its textures. */
+  onReady: () => void
   onExit: () => void
 }
 
@@ -27,9 +31,8 @@ const COUNT = navSections.length
 /** Door-frame progress threshold that triggers the white flash. */
 const DOOR_AT = 0.99
 
-export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
+export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps) {
   const trackRef = useRef<HTMLDivElement>(null)
-  const curtainRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
   const flashRef = useRef<HTMLDivElement>(null)
   const dpr = quality === 'full' ? 1.8 : 1.25
@@ -65,11 +68,11 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
     }
   }, [])
 
-  // Cinematic opening
+  // Cinematic opening: begins only after the loading video has finished.
   useEffect(() => {
+    if (!active) return
     if (reduced) {
       scrollState.intro = 1
-      if (curtainRef.current) curtainRef.current.style.display = 'none'
       return
     }
     const proxy = { v: 0 }
@@ -81,21 +84,10 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
         scrollState.intro = proxy.v
       },
     })
-    const curtain = curtainRef.current
-    const curtainTween = curtain
-      ? gsap.to(curtain, {
-          autoAlpha: 0,
-          duration: 1.1,
-          delay: 0.9,
-          ease: 'power2.inOut',
-        })
-      : null
-
     return () => {
       tween.kill()
-      curtainTween?.kill()
     }
-  }, [reduced])
+  }, [active, reduced])
 
   // Cursor parallax input (window-wide so overlays don't stall it)
   useEffect(() => {
@@ -121,7 +113,7 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
     const el = flashRef.current
     let last = performance.now()
     let prev = 0
-    let flashTween: ReturnType<typeof gsap.timeline> | null = null
+    let flashTween: ReturnType<typeof gsap.fromTo> | null = null
 
     const tick = () => {
       const now = performance.now()
@@ -131,21 +123,11 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
       const p = scrollState.smooth
       if (prev < DOOR_AT && p >= DOOR_AT) {
         flashTween?.kill()
-        flashTween = gsap
-          .timeline()
-          .fromTo(
-            el,
-            { scale: 0, opacity: 0, visibility: 'visible' },
-            { scale: 1, opacity: 1, duration: 0.55, ease: 'power2.in' },
-          )
-          .to(el, { opacity: 1, duration: 0.25 })
-          .to(el, {
-            opacity: 0,
-            duration: 0.6,
-            ease: 'power2.out',
-            delay: 0.15,
-          })
-          .set(el, { visibility: 'hidden' })
+        flashTween = gsap.fromTo(
+          el,
+          { scale: 0, visibility: 'visible' },
+          { scale: 2.2, duration: 1, ease: 'power2.in' },
+        )
       }
       prev = p
     }
@@ -178,7 +160,7 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
           gl.toneMapping = THREE.NoToneMapping
         }}
       >
-        <Scene quality={quality} reduced={reduced} />
+        <Scene quality={quality} reduced={reduced} onReady={onReady} />
         </Canvas>
       </div>
 
@@ -191,13 +173,6 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
 
       <div className="journey-progress" aria-hidden="true">
         <span ref={progressRef} />
-      </div>
-
-      <div className="curtain" ref={curtainRef} aria-hidden="true">
-        <span className="curtain__mark" lang="kn">
-          ಊ
-        </span>
-        <span className="curtain__text">Entering the dodda mane…</span>
       </div>
 
       <div className="flash" ref={flashRef} aria-hidden="true" />
