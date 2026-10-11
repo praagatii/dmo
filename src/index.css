@@ -696,6 +696,22 @@ a:hover {
   }
 }
 
+/* Door flash: a white circle that grows from the screen center to fill it. */
+.flash {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 200vmax;
+  height: 200vmax;
+  margin: -100vmax 0 0 -100vmax;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 70;
+}
+
 /* ---------------- Static fallback ---------------- */
 
 .static {

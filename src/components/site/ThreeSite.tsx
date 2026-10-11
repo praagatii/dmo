@@ -24,10 +24,14 @@ interface ThreeSiteProps {
 
 const COUNT = navSections.length
 
+/** Door-frame progress threshold that triggers the white flash. */
+const DOOR_AT = 0.99
+
 export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const curtainRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
+  const flashRef = useRef<HTMLDivElement>(null)
   const dpr = quality === 'full' ? 1.8 : 1.25
 
   // Scroll -> journey progress
@@ -111,16 +115,46 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
   // Smooth scroll: ease the shared progress on the GSAP ticker (60fps,
   // frame-rate independent). Everything that reads scrollState.smooth, most
   // notably the 3D camera, therefore glides instead of stepping with scroll.
+  // When the camera arrives at the door, fire a white flash from the screen
+  // center that grows to fill the viewport.
   useEffect(() => {
+    const el = flashRef.current
     let last = performance.now()
+    let prev = 0
+    let flashTween: ReturnType<typeof gsap.timeline> | null = null
+
     const tick = () => {
       const now = performance.now()
       smoothScrollStep((now - last) / 1000)
       last = now
+      if (reduced || !el) return
+      const p = scrollState.smooth
+      if (prev < DOOR_AT && p >= DOOR_AT) {
+        flashTween?.kill()
+        flashTween = gsap
+          .timeline()
+          .fromTo(
+            el,
+            { scale: 0, opacity: 0, visibility: 'visible' },
+            { scale: 1, opacity: 1, duration: 0.55, ease: 'power2.in' },
+          )
+          .to(el, { opacity: 1, duration: 0.25 })
+          .to(el, {
+            opacity: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            delay: 0.15,
+          })
+          .set(el, { visibility: 'hidden' })
+      }
+      prev = p
     }
     gsap.ticker.add(tick)
-    return () => gsap.ticker.remove(tick)
-  }, [])
+    return () => {
+      gsap.ticker.remove(tick)
+      flashTween?.kill()
+    }
+  }, [reduced])
 
   return (
     <>
@@ -165,6 +199,8 @@ export function ThreeSite({ quality, reduced }: ThreeSiteProps) {
         </span>
         <span className="curtain__text">Entering the dodda mane…</span>
       </div>
+
+      <div className="flash" ref={flashRef} aria-hidden="true" />
     </>
   )
 }
