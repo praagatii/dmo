@@ -1,17 +1,22 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { PerformanceMonitor } from '@react-three/drei'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import * as THREE from 'three'
 import { Scene } from '../three/Scene'
 import { CORRIDOR } from '../three/config'
 import { Nav } from './Nav'
 import { navSections } from '../../data/restaurant'
-import { resetScroll, scrollState, updatePointer } from '../../lib/scroll'
+import {
+  resetScroll,
+  scrollState,
+  smoothScrollStep,
+  updatePointer,
+} from '../../lib/scroll'
 import { setSectionHandler } from '../../lib/nav'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
 interface ThreeSiteProps {
   quality: 'full' | 'lite'
@@ -26,8 +31,7 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
   const curtainRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
   const [active, setActive] = useState(0)
-  const baseDpr = quality === 'full' ? 1.8 : 1.25
-  const [dpr, setDpr] = useState(baseDpr)
+  const dpr = quality === 'full' ? 1.8 : 1.25
 
   // Scroll -> journey progress
   useLayoutEffect(() => {
@@ -109,13 +113,32 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
     }
   }, [])
 
+  // Smooth scroll: ease the shared progress on the GSAP ticker (60fps,
+  // frame-rate independent). Everything that reads scrollState.smooth, most
+  // notably the 3D camera, therefore glides instead of stepping with scroll.
+  useEffect(() => {
+    let last = performance.now()
+    const tick = () => {
+      const now = performance.now()
+      smoothScrollStep((now - last) / 1000)
+      last = now
+    }
+    gsap.ticker.add(tick)
+    return () => gsap.ticker.remove(tick)
+  }, [])
+
   // Section navigation
   useEffect(() => {
     setSectionHandler((id) => {
       const i = navSections.findIndex((s) => s.id === id)
       if (i < 0) return
       const max = document.documentElement.scrollHeight - window.innerHeight
-      window.scrollTo({ top: (i / (COUNT - 1)) * max, behavior: 'smooth' })
+      gsap.to(window, {
+        scrollTo: (i / (COUNT - 1)) * max,
+        duration: 0.9,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      })
     })
     return () => setSectionHandler(null)
   }, [])
@@ -142,10 +165,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
           gl.toneMapping = THREE.NoToneMapping
         }}
       >
-        <PerformanceMonitor
-          onIncline={() => setDpr(baseDpr)}
-          onDecline={() => setDpr(1)}
-        />
         <Scene quality={quality} reduced={reduced} />
         </Canvas>
       </div>

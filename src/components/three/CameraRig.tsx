@@ -9,12 +9,13 @@ interface CameraRigProps {
 }
 
 /**
- * Drives the hero camera. Scroll writes scrollState.progress; the camera
- * slides deterministically between cameraStartZ and cameraEndZ and is eased
- * toward it each frame so movement stays smooth in both directions. The
- * cursor additionally shifts the camera a little (scrollState.pointerX/Y)
- * with a slight gaze steer, so the background parallaxes with the pointer —
- * a real camera move, not a screen-space layer shift.
+ * Drives the hero camera. Scroll writes scrollState.progress and the GSAP
+ * ticker glides scrollState.smooth toward it each frame at 60fps; the
+ * camera follows that smoothed value directly, so movement stays fluid in
+ * both directions with no per-frame fighting. The cursor additionally
+ * shifts the camera a little (scrollState.pointerX/Y) with a slight gaze
+ * steer, so the background parallaxes with the pointer — a real camera
+ * move, not a screen-space layer shift.
  */
 export function CameraRig({ reduced }: CameraRigProps) {
   const { camera } = useThree()
@@ -22,12 +23,13 @@ export function CameraRig({ reduced }: CameraRigProps) {
 
   useFrame((_state, delta) => {
     const dt = Math.min(delta, 0.05)
-    const p = scrollState.progress
+    const p = scrollState.smooth
 
     const k = 1 - Math.exp(-dt * 6)
 
-    // Forward dolly along -Z, plus the cursor parallax (disabled for users
-    // who prefer reduced motion).
+    // Forward dolly along -Z follows the smoothed scroll progress; the
+    // cursor parallax (disabled for users who prefer reduced motion) is
+    // eased separately so it feels like a camera floating with the pointer.
     const targetZ =
       CORRIDOR.cameraStartZ +
       (CORRIDOR.cameraEndZ - CORRIDOR.cameraStartZ) * p
