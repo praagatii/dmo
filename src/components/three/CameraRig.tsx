@@ -9,39 +9,36 @@ interface CameraRigProps {
 }
 
 /**
- * Drives the one-point-perspective forward travel.
- * Scroll writes scrollState.progress; this lerps the camera toward it so
- * movement stays buttery even when the scroll wheel is jumpy.
+ * Drives the forward travel through the multiplane corridor.
+ * Scroll writes scrollState.progress; camera z is a deterministic lerp
+ * between cameraStartZ and cameraEndZ, then eased toward it each frame so
+ * movement stays smooth in both directions without any timers. The camera
+ * is kept exactly level and on-axis so the layered reconstruction always
+ * matches the reference composition.
  */
-export function CameraRig({ reduced }: CameraRigProps) {
+export function CameraRig(_props: CameraRigProps) {
   const { camera } = useThree()
-  const look = useRef(new THREE.Vector3(0, CORRIDOR.eyeHeight, -10))
+  const look = useRef(new THREE.Vector3(0, 0, -10))
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     const dt = Math.min(delta, 0.05)
     const p = scrollState.progress
     const intro = scrollState.intro
 
-    const k = 1 - Math.exp(-dt * 5.5)
+    const k = 1 - Math.exp(-dt * 6)
 
     const travel =
       CORRIDOR.cameraStartZ +
       (CORRIDOR.cameraEndZ - CORRIDOR.cameraStartZ) * p
-    // Cinematic opening: a small arrival offset that settles to zero.
-    const targetZ = travel + (1 - intro) * 3.2
+    // Cinematic opening: settle from slightly forward of the start framing.
+    const targetZ = travel + (1 - intro) * 2.6
 
     const cam = camera as THREE.PerspectiveCamera
+    cam.position.x += (0 - cam.position.x) * k
+    cam.position.y += (0 - cam.position.y) * k
     cam.position.z += (targetZ - cam.position.z) * k
 
-    const t = state.clock.elapsedTime
-    const breathe = reduced ? 0 : Math.sin(t * 0.9) * 0.012
-    cam.position.y = CORRIDOR.eyeHeight + breathe
-
-    look.current.set(
-      cam.position.x * 0.4,
-      CORRIDOR.eyeHeight - 0.05,
-      cam.position.z - 12,
-    )
+    look.current.set(0, 0, cam.position.z - 12)
     cam.lookAt(look.current)
   })
 

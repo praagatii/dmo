@@ -122,17 +122,13 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
           stencil: false,
         }}
         camera={{
-          fov: 62,
-          near: 0.1,
-          far: 220,
-          position: [0, CORRIDOR.eyeHeight, CORRIDOR.cameraStartZ],
+          fov: CORRIDOR.fov,
+          near: CORRIDOR.nearPlane,
+          far: CORRIDOR.farPlane,
+          position: [0, 0, CORRIDOR.cameraStartZ],
         }}
         onCreated={({ gl }) => {
-          gl.toneMapping = THREE.ACESFilmicToneMapping
-          gl.toneMappingExposure = 1.08
-          gl.shadowMap.type = THREE.PCFSoftShadowMap
-          gl.shadowMap.autoUpdate = false
-          gl.shadowMap.needsUpdate = true
+          gl.toneMapping = THREE.NoToneMapping
         }}
       >
         <PerformanceMonitor
