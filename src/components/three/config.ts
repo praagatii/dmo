@@ -19,7 +19,16 @@ export const CORRIDOR = {
   imageAspect: 1672 / 941,
   /** Camera starts level at the vanishing point height (0). */
   cameraStartZ: 0,
-  cameraEndZ: -36,
+  /**
+   * Forward travel. The supplied layers are single-viewpoint crops placed on
+   * parallel planes: the initial frame reproduces the reference exactly at
+   * cameraStartZ, but re-projecting *perspective-baked* art through a moving
+   * camera only stays believable while the dolly is small relative to the
+   * nearest plane. The nearest plane sits at z = -40, so travel is capped at
+   * 30% of that distance; a larger dolly balloons the near planes and shears
+   * surfaces (the "floating carpet" / oversized plants failure mode).
+   */
+  cameraEndZ: -12,
   nearPlane: 0.1,
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */

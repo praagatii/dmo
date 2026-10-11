@@ -23,15 +23,15 @@ export function CameraRig(_props: CameraRigProps) {
   useFrame((_state, delta) => {
     const dt = Math.min(delta, 0.05)
     const p = scrollState.progress
-    const intro = scrollState.intro
 
     const k = 1 - Math.exp(-dt * 6)
 
-    const travel =
+    // Pure forward dolly along -Z. The camera never moves behind the start
+    // frame, so the opening composition is exactly the reference from the
+    // first rendered frame (no exposed background gaps, no layer drift).
+    const targetZ =
       CORRIDOR.cameraStartZ +
       (CORRIDOR.cameraEndZ - CORRIDOR.cameraStartZ) * p
-    // Cinematic opening: settle from slightly forward of the start framing.
-    const targetZ = travel + (1 - intro) * 2.6
 
     const cam = camera as THREE.PerspectiveCamera
     cam.position.x += (0 - cam.position.x) * k
