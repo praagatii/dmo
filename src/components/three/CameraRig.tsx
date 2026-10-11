@@ -26,6 +26,9 @@ export function CameraRig({ reduced }: CameraRigProps) {
     const p = scrollState.smooth
 
     const k = 1 - Math.exp(-dt * 6)
+    // Parallax is eased much more gently than the dolly, so the camera
+    // glides toward the cursor instead of chasing it (floating, smooth feel).
+    const kp = 1 - Math.exp(-dt * 2.5)
 
     // Forward dolly along -Z follows the smoothed scroll progress; the
     // cursor parallax (disabled for users who prefer reduced motion) is
@@ -38,8 +41,8 @@ export function CameraRig({ reduced }: CameraRigProps) {
     const ty = scrollState.pointerY * pan
 
     const cam = camera as THREE.PerspectiveCamera
-    cam.position.x += (tx - cam.position.x) * k
-    cam.position.y += (ty - cam.position.y) * k
+    cam.position.x += (tx - cam.position.x) * kp
+    cam.position.y += (ty - cam.position.y) * kp
     cam.position.z += (targetZ - cam.position.z) * k
 
     look.current.set(
