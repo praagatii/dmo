@@ -6,7 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import * as THREE from 'three'
 import { Scene } from '../three/Scene'
 import { CORRIDOR } from '../three/config'
-import { Overlay } from './Overlay'
 import { Nav } from './Nav'
 import { navSections } from '../../data/restaurant'
 import { resetScroll, scrollState } from '../../lib/scroll'
@@ -26,7 +25,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const curtainRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
-  const listenerRef = useRef<((p: number) => void) | null>(null)
   const [active, setActive] = useState(0)
   const baseDpr = quality === 'full' ? 1.8 : 1.25
   const [dpr, setDpr] = useState(baseDpr)
@@ -38,7 +36,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
 
     window.scrollTo(0, 0)
     resetScroll()
-    listenerRef.current?.(0)
 
     const st = ScrollTrigger.create({
       trigger: track,
@@ -46,7 +43,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
       end: 'bottom bottom',
       onUpdate: (self) => {
         scrollState.progress = self.progress
-        listenerRef.current?.(self.progress)
         if (progressRef.current) {
           progressRef.current.style.transform = `scaleY(${self.progress})`
         }
@@ -138,8 +134,6 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
         <Scene quality={quality} reduced={reduced} />
         </Canvas>
       </div>
-
-      <Overlay listenerRef={listenerRef} />
 
       <Nav
         active={active}
