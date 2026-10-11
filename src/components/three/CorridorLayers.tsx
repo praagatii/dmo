@@ -9,11 +9,9 @@ interface CorridorLayersProps {
 }
 
 /**
- * The multiplane corridor: every supplied layer on its own full-frame
- * plane at the depth recorded in the manifest. All planes are coaxial and
- * parallel, so from the start camera the stack composites to the master
- * reference, and as the camera advances the nearer planes outgrow and pass
- * out of view while the door grows ahead.
+ * The corridor background. It renders the single full reference image on one
+ * plane sized so that, from the start camera, it fills the viewport exactly.
+ * As the camera advances the plane grows, giving a gentle walk-in zoom.
  */
 export function CorridorLayers({ quality }: CorridorLayersProps) {
   const textures = useLoader(THREE.TextureLoader, LAYERS.map((l) => l.file))
