@@ -8,7 +8,7 @@ import { Scene } from '../three/Scene'
 import { CORRIDOR } from '../three/config'
 import { Nav } from './Nav'
 import { navSections } from '../../data/restaurant'
-import { resetScroll, scrollState } from '../../lib/scroll'
+import { resetScroll, scrollState, updatePointer } from '../../lib/scroll'
 import { setSectionHandler } from '../../lib/nav'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -93,6 +93,21 @@ export function ThreeSite({ quality, reduced, onExit }: ThreeSiteProps) {
       curtainTween?.kill()
     }
   }, [reduced])
+
+  // Cursor parallax input (window-wide so overlays don't stall it)
+  useEffect(() => {
+    const onPointer = (e: PointerEvent) => updatePointer(e.clientX, e.clientY)
+    const onLeave = () => {
+      scrollState.pointerX = 0
+      scrollState.pointerY = 0
+    }
+    window.addEventListener('pointermove', onPointer)
+    document.documentElement.addEventListener('pointerleave', onLeave)
+    return () => {
+      window.removeEventListener('pointermove', onPointer)
+      document.documentElement.removeEventListener('pointerleave', onLeave)
+    }
+  }, [])
 
   // Section navigation
   useEffect(() => {

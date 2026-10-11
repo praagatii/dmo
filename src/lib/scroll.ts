@@ -8,11 +8,22 @@ export const scrollState = {
   progress: 0,
   /** Cinematic opening: 0 = curtain closed/still, 1 = fully inside. */
   intro: 0,
+  /** Cursor position in -1..1 (x right, y up) for the hero parallax. */
+  pointerX: 0,
+  pointerY: 0,
 }
 
 export function resetScroll() {
   scrollState.progress = 0
   scrollState.intro = 0
+  scrollState.pointerX = 0
+  scrollState.pointerY = 0
+}
+
+/** Normalise window cursor coordinates into -1..1 and share them. */
+export function updatePointer(clientX: number, clientY: number) {
+  scrollState.pointerX = (clientX / window.innerWidth) * 2 - 1
+  scrollState.pointerY = -((clientY / window.innerHeight) * 2 - 1)
 }
 
 /** Section station positions along the journey (0..1). */

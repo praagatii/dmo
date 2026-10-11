@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { useThree } from '@react-three/fiber'
-import { CORRIDOR } from './config'
+import { CORRIDOR, PARALLAX } from './config'
 
 interface LayerPlaneProps {
   texture: THREE.Texture
@@ -26,7 +26,7 @@ export function LayerPlane({ texture, z, opacity = 1 }: LayerPlaneProps) {
 
   const dims = useMemo(() => {
     const dist = CORRIDOR.cameraStartZ - z
-    const h = CORRIDOR.viewScale * dist
+    const h = CORRIDOR.viewScale * dist * PARALLAX.margin
     const w = h * Math.max(CORRIDOR.imageAspect, canvasAspect)
     return { w, h }
   }, [z, canvasAspect])

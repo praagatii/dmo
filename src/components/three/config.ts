@@ -34,3 +34,20 @@ export const PALETTE = {
   lamp: '#ffcf8e',
   terracotta: '#e07a38',
 }
+
+/**
+ * Cursor parallax for the hero background. The camera translates a little
+ * with the pointer and its gaze steers slightly, so the image appears to
+ * shift with the cursor (a small real camera move, not a fake layer offset).
+ */
+export const PARALLAX = {
+  /** Camera travel (world units) at the cursor extremes (-1..1). */
+  pan: 0.6,
+  /**
+   * The plane is drawn this many times larger than the exact fill so the
+   * camera can pan without ever exposing a gap at the edges.
+   */
+  margin: 1.12,
+  /** How much the camera gaze steers with the cursor (0 = eyes straight). */
+  look: 0.5,
+}
