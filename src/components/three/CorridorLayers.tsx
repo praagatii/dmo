@@ -34,13 +34,7 @@ export function CorridorLayers({ quality }: CorridorLayersProps) {
       {visible.map((layer) => {
         const index = LAYERS.indexOf(layer)
         return (
-          <LayerPlane
-            key={layer.id}
-            texture={srgbTextures[index]}
-            z={layer.z}
-            blend={layer.blend}
-            opacity={layer.opacity}
-          />
+          <LayerPlane key={layer.id} texture={srgbTextures[index]} z={layer.z} />
         )
       })}
     </group>

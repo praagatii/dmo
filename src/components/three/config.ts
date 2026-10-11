@@ -19,7 +19,7 @@ export const CORRIDOR = {
   imageAspect: 1672 / 941,
   /** Camera starts level at the vanishing point height (0). */
   cameraStartZ: 0,
-  cameraEndZ: -40,
+  cameraEndZ: -36,
   nearPlane: 0.1,
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */
