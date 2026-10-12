@@ -28,8 +28,9 @@ interface ThreeSiteProps {
 
 const COUNT = navSections.length
 
-/** Door-frame progress threshold that triggers the white flash. */
-const DOOR_AT = 0.99
+/** Scroll range over which the door flash fades in — and back out, in reverse. */
+const FLASH_START = 0.9
+const FLASH_FULL = 0.99
 
 export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps) {
   const trackRef = useRef<HTMLDivElement>(null)
@@ -107,35 +108,31 @@ export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps)
   // Smooth scroll: ease the shared progress on the GSAP ticker (60fps,
   // frame-rate independent). Everything that reads scrollState.smooth, most
   // notably the 3D camera, therefore glides instead of stepping with scroll.
-  // When the camera arrives at the door, fire a white flash from the screen
-  // center that grows to fill the viewport.
+  // The white door flash is a plain full-screen fade whose opacity tracks the
+  // approach to the doorway — so it builds as you arrive and recedes back when
+  // you scroll up again.
   useEffect(() => {
     const el = flashRef.current
     let last = performance.now()
-    let prev = 0
-    let flashTween: ReturnType<typeof gsap.fromTo> | null = null
 
     const tick = () => {
       const now = performance.now()
       smoothScrollStep((now - last) / 1000)
       last = now
       if (reduced || !el) return
-      const p = scrollState.smooth
-      if (prev < DOOR_AT && p >= DOOR_AT) {
-        flashTween?.kill()
-        flashTween = gsap.fromTo(
-          el,
-          { scale: 0, visibility: 'visible' },
-          { scale: 2.2, duration: 1, ease: 'power2.in' },
-        )
-      }
-      prev = p
+      const t = Math.min(
+        1,
+        Math.max(
+          0,
+          (scrollState.smooth - FLASH_START) / (FLASH_FULL - FLASH_START),
+        ),
+      )
+      const eased = t * t * (3 - 2 * t)
+      el.style.opacity = String(eased)
+      el.style.visibility = eased > 0.001 ? 'visible' : 'hidden'
     }
     gsap.ticker.add(tick)
-    return () => {
-      gsap.ticker.remove(tick)
-      flashTween?.kill()
-    }
+    return () => gsap.ticker.remove(tick)
   }, [reduced])
 
   return (

@@ -696,34 +696,16 @@ a:hover {
   }
 }
 
-/* Door flash: a soft white bloom that grows from the screen center and
-   settles into full white. The feathered radial mask keeps the leading edge
-   from reading as a hard circle. */
+/* Door flash: a plain white layer. No shape — its opacity simply tracks how
+   close the walk is to the doorway, so it fades in and back out with scroll. */
 .flash {
   position: fixed;
   inset: 0;
   z-index: 70;
   background: #fff;
+  opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(
-    circle at 50% 50%,
-    #000 0%,
-    #000 45%,
-    rgba(0, 0, 0, 0.85) 62%,
-    rgba(0, 0, 0, 0) 80%
-  );
-  mask-image: radial-gradient(
-    circle at 50% 50%,
-    #000 0%,
-    #000 45%,
-    rgba(0, 0, 0, 0.85) 62%,
-    rgba(0, 0, 0, 0) 80%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
 }
 
 /* Loading screen: the pre-roll clip, held on frame 1 until the hero loads. */
