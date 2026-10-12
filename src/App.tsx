@@ -4,7 +4,7 @@ import { useRoute, Link } from './lib/router'
 import { CartProvider } from './lib/cart'
 import { RealHome } from './components/site/RealHome'
 import { Loader } from './components/site/Loader'
-import { AppHeader } from './components/site/AppHeader'
+import { OrderNav } from './components/site/OrderNav'
 import { SiteFooter } from './components/site/SiteFooter'
 import { OrderPage } from './components/order/OrderPage'
 import { CartPage } from './components/order/CartPage'
@@ -149,7 +149,7 @@ function Shell() {
 
   return (
     <div className="app-shell">
-      <AppHeader />
+      <OrderNav />
       {renderRoute(route)}
       <SiteFooter />
     </div>

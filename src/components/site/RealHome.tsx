@@ -9,91 +9,15 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { navigate, navigateToSection } from '../../lib/router'
 import RealSections from './RealSections'
-
-const STAGGER = 0.035
-
-interface NavItem {
-  name: string
-  to?: string
-  section?: string
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { name: 'Home', to: '/' },
-  { name: 'Menu', to: '/order' },
-  { name: 'Our Story', section: 'story' },
-  { name: 'Locations', section: 'locations' },
-]
-
-function TextRoll({ children }: { children: string }) {
-  const chars = children.split('')
-  const delay = (i: number) =>
-    `${(STAGGER * Math.abs(i - (chars.length - 1) / 2)).toFixed(3)}s`
-  return (
-    <span className="real-roll group-roll">
-      <span>
-        {chars.map((l, i) => (
-          <span
-            key={`a${i}`}
-            className="real-roll__a"
-            style={{ transitionDelay: delay(i) }}
-          >
-            {l}
-          </span>
-        ))}
-      </span>
-      <span>
-        {chars.map((l, i) => (
-          <span
-            key={`b${i}`}
-            className="real-roll__b"
-            style={{ transitionDelay: delay(i) }}
-          >
-            {l}
-          </span>
-        ))}
-      </span>
-    </span>
-  )
-}
-
-function MenuOverlay({
-  onPick,
-  onClose,
-}: {
-  onPick: (item: NavItem) => void
-  onClose: () => void
-}) {
-  return (
-    <div
-      className="real-menu-overlay"
-      onClick={(e) => {
-        e.stopPropagation()
-        onClose()
-      }}
-    >
-      <ul className="real-menu-list">
-        {NAV_ITEMS.map((item) => (
-          <li key={item.name} className="real-menu-item">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                onPick(item)
-              }}
-            >
-              <TextRoll>{item.name}</TextRoll>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
+import {
+  SquareMenuOverlay,
+  useMenuScale,
+  type SquareNavItem,
+} from './SquareNav'
 
 export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
   const [open, setOpen] = useState(false)
-  const [menuScale, setMenuScale] = useState(40)
+  const menuScale = useMenuScale()
 
   // Settled-state helper: when the intro should not play (already shown via
   // the 3D journey, or a later visit this session) render the hero as it looks
@@ -111,15 +35,6 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
     set('.real-square', 'opacity', '1')
     set('.centre-logo', 'transform', 'none')
   }
-
-  useEffect(() => {
-    const vw = window.innerWidth
-    const vh = window.innerHeight
-    const cy = 16 + 36
-    const dx = vw / 2
-    const dy = Math.max(cy, vh - cy)
-    setMenuScale(Math.ceil(Math.max(dx, dy) / 36) + 1)
-  }, [])
 
   // While the full-screen nav is open, freeze background scrolling.
   useEffect(() => {
@@ -181,7 +96,7 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
     return () => ctx.revert()
   }, [playIntro])
 
-  const pick = (item: NavItem) => {
+  const pick = (item: SquareNavItem) => {
     setOpen(false)
     if (item.section) navigateToSection('/', item.section)
     else if (item.to) navigate(item.to)
@@ -234,7 +149,7 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
       />
 
       {open && (
-        <MenuOverlay onPick={pick} onClose={() => setOpen(false)} />
+        <SquareMenuOverlay onPick={pick} onClose={() => setOpen(false)} />
       )}
     </main>
   )
