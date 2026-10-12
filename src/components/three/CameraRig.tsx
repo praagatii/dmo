@@ -41,13 +41,14 @@ export function CameraRig({ reduced }: CameraRigProps) {
     const ty = scrollState.pointerY * pan
 
     const cam = camera as THREE.PerspectiveCamera
+    const baseY = CORRIDOR.cameraHeight
     cam.position.x += (tx - cam.position.x) * kp
-    cam.position.y += (ty - cam.position.y) * kp
+    cam.position.y += (baseY + ty - cam.position.y) * kp
     cam.position.z += (targetZ - cam.position.z) * k
 
     look.current.set(
       tx * PARALLAX.look,
-      ty * PARALLAX.look,
+      baseY + ty * PARALLAX.look,
       cam.position.z - 12,
     )
     cam.lookAt(look.current)

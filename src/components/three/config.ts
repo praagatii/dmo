@@ -15,6 +15,14 @@ export const CORRIDOR = {
   /** Camera starts level at the vanishing point height (0). */
   cameraStartZ: 0,
   /**
+   * Camera eye height (world units). Sat a little below the corridor horizon
+   * so the view stays anchored on the ground: the depth relief pushes the near
+   * floor down the frame (more the closer the camera gets), and dropping the
+   * eye by roughly DEPTH.amplitude cancels that, so the walk-in reads level
+   * rather than "lifting off".
+   */
+  cameraHeight: -2,
+  /**
    * Forward travel. The single background plane sits at z = -40 and fills
    * the viewport at the start camera (z = 0). Advancing to cameraEndZ dolls
    * in toward the image: at full scroll the plane is (40/16) = 2.5x screen
