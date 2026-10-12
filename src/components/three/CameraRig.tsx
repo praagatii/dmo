@@ -20,6 +20,7 @@ interface CameraRigProps {
 export function CameraRig({ reduced }: CameraRigProps) {
   const { camera } = useThree()
   const look = useRef(new THREE.Vector3(0, 0, -10))
+  const cursor = useRef({ x: 0, y: 0 })
 
   useFrame((_state, delta) => {
     const dt = Math.min(delta, 0.05)
@@ -36,17 +37,27 @@ export function CameraRig({ reduced }: CameraRigProps) {
     const targetZ =
       CORRIDOR.cameraStartZ +
       (CORRIDOR.cameraEndZ - CORRIDOR.cameraStartZ) * p
-    // Sink the camera toward the floor as the dolly advances, so the lower part
-    // of the corridor (and the base of the door) stays in frame.
-    const drop = CORRIDOR.lowerAsScroll * p
     const pan = reduced ? 0 : PARALLAX.pan
     const tx = scrollState.pointerX * pan
     const ty = scrollState.pointerY * pan
 
+    // Only the cursor parallax is eased (a gentle float); everything driven by
+    // the scroll tracks the smoothed progress directly.
+    cursor.current.x += (tx - cursor.current.x) * kp
+    cursor.current.y += (ty - cursor.current.y) * kp
+
     const cam = camera as THREE.PerspectiveCamera
-    cam.position.x += (tx - cam.position.x) * kp
-    cam.position.y += (ty - drop - cam.position.y) * kp
+    cam.position.x = cursor.current.x
     cam.position.z += (targetZ - cam.position.z) * k
+
+    // Sink toward the floor in lockstep with the dolly. Tied to the camera's
+    // actual forward position so the downward pan stays in sync with the zoom
+    // instead of easing separately and reading as an unsmooth drift.
+    const dollyT =
+      (cam.position.z - CORRIDOR.cameraStartZ) /
+      (CORRIDOR.cameraEndZ - CORRIDOR.cameraStartZ)
+    const drop = CORRIDOR.lowerAsScroll * dollyT
+    cam.position.y = cursor.current.y - drop
 
     look.current.set(
       tx * PARALLAX.look,
