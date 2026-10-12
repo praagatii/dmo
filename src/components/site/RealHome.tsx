@@ -1,14 +1,23 @@
 // Real Doddmane home — ported from ragwhoo/doddamane (Next.js) into this Vite
 // app. Home hero (herobg parallax zoom + leaf reveal + centre logo + text.png)
-// and the homepage sections. Navigation lives in the persistent SiteNav bar,
-// so the hero carries only the brand, the tagline and the order CTA.
-import { useLayoutEffect, useRef } from 'react'
+// with the dark green nav-square that expands into a full-screen menu.
+//
+// Navigation items reflect the current site structure: Home + Menu are
+// routes (Menu is the only separate page), while Our Story and Locations are
+// sections on the homepage that the menu smooth-scrolls to.
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
-import { navigate } from '../../lib/router'
+import { navigate, navigateToSection } from '../../lib/router'
 import RealSections from './RealSections'
+import {
+  SquareMenuOverlay,
+  useMenuScale,
+  type SquareNavItem,
+} from './SquareNav'
 
 export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
-  const introPlayedRef = useRef(false)
+  const [open, setOpen] = useState(false)
+  const menuScale = useMenuScale()
 
   // Settled-state helper: when the intro should not play (already shown via
   // the 3D journey, or a later visit this session) render the hero as it looks
@@ -23,8 +32,21 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
       if (el) (el as HTMLElement).style[prop as never] = val
     }
     set('.hero-text', 'opacity', '1')
+    set('.real-square', 'opacity', '1')
     set('.centre-logo', 'transform', 'none')
   }
+
+  // While the full-screen nav is open, freeze background scrolling.
+  useEffect(() => {
+    if (!open) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
+  const introPlayedRef = useRef(false)
 
   useLayoutEffect(() => {
     const mainRoot = document.querySelector('.real-site')
@@ -48,6 +70,7 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
     const ctx = gsap.context(() => {
       gsap.set(heroBg, { scale: 1.15 })
       gsap.set('.centre-logo', { y: '-100vh' })
+      gsap.set('.real-square', { opacity: 0 })
 
       const tl = gsap.timeline({
         defaults: { ease: 'power3.inOut', duration: 1.4 },
@@ -67,10 +90,17 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
           1.4,
         )
         .to('.centre-logo', { y: '0vh', duration: 1, ease: 'power3.out' }, 1.4)
+        .to('.real-square', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 2.4)
     }, mainRoot)
 
     return () => ctx.revert()
   }, [playIntro])
+
+  const pick = (item: SquareNavItem) => {
+    setOpen(false)
+    if (item.section) navigateToSection('/', item.section)
+    else if (item.to) navigate(item.to)
+  }
 
   return (
     <main className="real-site">
@@ -80,7 +110,10 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
           <img src="/34.png" alt="left leaf" className="leaf-left" />
           <img src="/35.png" alt="right leaf" className="leaf-right" />
         </div>
-        <div className="real-logo-wrap">
+        <div
+          className={`real-logo-wrap${open ? ' real-logo-wrap--hidden' : ''}`}
+          onClick={() => setOpen((v) => !v)}
+        >
           <img src="/centre-logo.png" alt="centre logo" className="centre-logo" />
         </div>
         <div className="real-hero__group">
@@ -102,6 +135,22 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
       </section>
 
       <RealSections onOrder={() => navigate('/order')} />
+
+      <button
+        type="button"
+        className="real-square"
+        style={
+          open
+            ? { transform: `scale(${menuScale})`, borderRadius: 0 }
+            : undefined
+        }
+        onClick={() => setOpen((v) => !v)}
+        aria-label="menu"
+      />
+
+      {open && (
+        <SquareMenuOverlay onPick={pick} onClose={() => setOpen(false)} />
+      )}
     </main>
   )
 }
