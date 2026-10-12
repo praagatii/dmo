@@ -52,8 +52,16 @@ export function LayerPlane({
 
   const dims = useMemo(() => {
     const dist = CORRIDOR.cameraStartZ - z
-    const h = CORRIDOR.viewScale * dist * PARALLAX.margin
-    const w = h * Math.max(CORRIDOR.imageAspect, canvasAspect)
+    const fillH = CORRIDOR.viewScale * dist
+    // Cover the viewport while preserving the image's own aspect. A plain
+    // fronto-parallel plane stretches the picture whenever the viewport is
+    // wider than the image, so scale up by the larger of the two ratios
+    // instead of widening only the plane.
+    const h =
+      fillH *
+      Math.max(1, canvasAspect / CORRIDOR.imageAspect) *
+      PARALLAX.margin
+    const w = h * CORRIDOR.imageAspect
     return { w, h }
   }, [z, canvasAspect])
 
