@@ -32,12 +32,19 @@ const COUNT = navSections.length
 const FLASH_START = 0.9
 const FLASH_FULL = 0.99
 
-export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps) {
+export function ThreeSite({
+  quality,
+  reduced,
+  active,
+  onReady,
+  onExit,
+}: ThreeSiteProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
   const flashRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLDivElement>(null)
   const dimRef = useRef<HTMLDivElement>(null)
+  const exitedRef = useRef(false)
   const dpr = quality === 'full' ? 1.8 : 1.25
 
   // Scroll -> journey progress
@@ -124,6 +131,13 @@ export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps)
       smoothScrollStep((now - last) / 1000)
       last = now
 
+      // Destination: once the doorway flash is fully on (or a reduced-motion
+      // user reaches the end), drop into the page content.
+      if (!exitedRef.current && scrollState.smooth >= FLASH_FULL) {
+        exitedRef.current = true
+        onExit()
+      }
+
       // The restaurant name sits centre-screen on desktop: it appears right
       // after the loading screen ends and fades out as soon as the user scrolls.
       // The corridor dims slightly while the name is up.
@@ -133,7 +147,7 @@ export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps)
         const o = fadeIn * fadeOut
         name.style.opacity = String(o)
         name.style.visibility = o > 0.001 ? 'visible' : 'hidden'
-        dim.style.opacity = String(o * 0.35)
+        dim.style.opacity = String(o * 0.4)
         dim.style.visibility = o > 0.001 ? 'visible' : 'hidden'
       }
 
