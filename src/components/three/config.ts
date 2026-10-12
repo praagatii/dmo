@@ -29,7 +29,7 @@ export const CORRIDOR = {
    * bottom of the frame; lowering the camera as you travel pans the view down
    * so the floor and the door stay in shot.
    */
-  lowerAsScroll: 4,
+  lowerAsScroll: 8,
   nearPlane: 0.1,
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */
