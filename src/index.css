@@ -1442,6 +1442,13 @@ a:hover {
   object-fit: cover;
 }
 
+/* Scroll parallax — see src/lib/parallax.ts. The base scale keeps the image
+   from revealing an edge before (or without) the JS transform. */
+[data-parallax] {
+  will-change: transform;
+  transform: scale(1.18);
+}
+
 .rs-oota {
   list-style: none;
   margin: 2.5rem 0 0;

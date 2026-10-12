@@ -3,9 +3,11 @@
 // (restaurant.ts, branches.ts) — nothing invented. The homepage footer is
 // rendered by the app shell (App.tsx) so every page shares the same chrome.
 // The homepage menu belongs to the dedicated ordering experience, not here.
+import { useEffect } from 'react'
 import { restaurant, navSections } from '../../data/restaurant'
 import { branches } from '../../data/branches'
 import { Link } from '../../lib/router'
+import { initParallax } from '../../lib/parallax'
 
 interface Props {
   onOrder: () => void
@@ -15,6 +17,9 @@ const storyLabel = navSections.find((s) => s.id === 'story')
 
 export default function RealSections({ onOrder }: Props) {
   const v = restaurant.verified
+
+  useEffect(() => initParallax(), [])
+
   return (
     <>
       <section id="story" className="rs-section rs-cream">
@@ -35,7 +40,7 @@ export default function RealSections({ onOrder }: Props) {
             </p>
           </div>
           <div className="rs-story-media">
-            <img src="/bg1.png" alt="" className="rs-media-img" />
+            <img src="/bg1.png" alt="" className="rs-media-img" data-parallax />
           </div>
         </div>
       </section>
@@ -101,6 +106,7 @@ export default function RealSections({ onOrder }: Props) {
                 src="/herobg.png"
                 alt="Doddmane Oota — placeholder photograph of the dining space"
                 loading="lazy"
+                data-parallax
               />
             </figure>
             <figure className="ambience-item">
@@ -108,6 +114,7 @@ export default function RealSections({ onOrder }: Props) {
                 src="/bg1.png"
                 alt="Meals served at Doddmane Oota — placeholder photograph"
                 loading="lazy"
+                data-parallax
               />
             </figure>
             <figure className="ambience-item">
@@ -115,6 +122,7 @@ export default function RealSections({ onOrder }: Props) {
                 src="/bgdm1.png"
                 alt="Doddmane Oota detail — placeholder photograph"
                 loading="lazy"
+                data-parallax
               />
             </figure>
           </div>
