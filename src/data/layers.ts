@@ -24,10 +24,10 @@ export interface LayerDef {
 export const LAYERS: LayerDef[] = [
   {
     id: 'BG',
-    file: '/bg.png',
-    depth: '/bgdm.png',
+    file: '/bg1.png',
+    depth: '/bgdm1.png',
     role: 'Golden Heritage Hallway (single image displaced by its depth map)',
     z: -40,
-    source: 'bg.png',
+    source: 'bg1.png',
   },
 ]
