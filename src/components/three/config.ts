@@ -22,6 +22,14 @@ export const CORRIDOR = {
    * 3.5) so the enlarged foreground stays clean.
    */
   cameraEndZ: -24,
+  /**
+   * How far (world units) the camera sinks toward the floor by the end of the
+   * scroll. Advancing scales the view about the screen centre, which pushes the
+   * lower half of the hallway — including the base of the door — out of the
+   * bottom of the frame; lowering the camera as you travel pans the view down
+   * so the floor and the door stay in shot.
+   */
+  lowerAsScroll: 4,
   nearPlane: 0.1,
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */

@@ -36,18 +36,21 @@ export function CameraRig({ reduced }: CameraRigProps) {
     const targetZ =
       CORRIDOR.cameraStartZ +
       (CORRIDOR.cameraEndZ - CORRIDOR.cameraStartZ) * p
+    // Sink the camera toward the floor as the dolly advances, so the lower part
+    // of the corridor (and the base of the door) stays in frame.
+    const drop = CORRIDOR.lowerAsScroll * p
     const pan = reduced ? 0 : PARALLAX.pan
     const tx = scrollState.pointerX * pan
     const ty = scrollState.pointerY * pan
 
     const cam = camera as THREE.PerspectiveCamera
     cam.position.x += (tx - cam.position.x) * kp
-    cam.position.y += (ty - cam.position.y) * kp
+    cam.position.y += (ty - drop - cam.position.y) * kp
     cam.position.z += (targetZ - cam.position.z) * k
 
     look.current.set(
       tx * PARALLAX.look,
-      ty * PARALLAX.look,
+      ty * PARALLAX.look - drop,
       cam.position.z - 12,
     )
     cam.lookAt(look.current)
