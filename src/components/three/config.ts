@@ -26,6 +26,13 @@ export const CORRIDOR = {
   farPlane: 400,
   /** Per-unit plane height factor: 2 * tan(fov/2). */
   viewScale: 2 * Math.tan((50 * Math.PI) / 360),
+  /**
+   * Where the corridor's vanishing point sits in the reference image, as a
+   * fraction from the top (measured from the depth map: the far doorway is at
+   * ~0.43). The backdrop is nudged so this lands on the camera's level line;
+   * otherwise the level camera reads as a slight downward tilt ("lifted").
+   */
+  horizonRow: 0.43,
 }
 
 export const PALETTE = {
@@ -45,9 +52,10 @@ export const PARALLAX = {
   pan: 0.6,
   /**
    * The plane is drawn this many times larger than the exact fill so the
-   * camera can pan without ever exposing a gap at the edges.
+   * camera can pan without ever exposing a gap at the edges (and so the
+   * horizon nudge below still leaves the top edge covered).
    */
-  margin: 1.12,
+  margin: 1.18,
   /** How much the camera gaze steers with the cursor (0 = eyes straight). */
   look: 0.5,
 }

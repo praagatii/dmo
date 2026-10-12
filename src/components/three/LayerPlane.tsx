@@ -57,6 +57,10 @@ export function LayerPlane({
     return { w, h }
   }, [z, canvasAspect])
 
+  // Seat the corridor's horizon on the camera's level line (plain geometry —
+  // no filters or post effects). See CORRIDOR.horizonRow.
+  const yOffset = (CORRIDOR.horizonRow - 0.5) * dims.h
+
   const depth = useMemo(() => {
     const img = depthTexture?.image as
       | HTMLImageElement
@@ -93,7 +97,13 @@ export function LayerPlane({
     return mat
   }, [texture, opacity, z])
 
-  return <mesh position={[0, 0, z]} material={material} geometry={geometry} />
+  return (
+    <mesh
+      position={[0, yOffset, z]}
+      material={material}
+      geometry={geometry}
+    />
+  )
 }
 
 /** Bilinear sample of a depth grid at vertex UV (v: 1 = image top). */
