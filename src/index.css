@@ -311,6 +311,58 @@ a:hover {
   touch-action: pan-y;
 }
 
+/* Restaurant name, centre-screen over the corridor on desktop. Appears right
+   after the loading screen ends and fades out on the first scroll (opacity is
+   driven per-frame by ThreeSite's scroll tick). */
+.hero-name {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+
+.hero-name__img {
+  max-width: min(46vw, 720px);
+  height: auto;
+  filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.55));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Gentle vignette over the corridor while the name is up (synced to the
+   same per-frame opacity as .hero-name, capped at ~35%). */
+.hero-name-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(10, 6, 3, 0) 0%,
+    rgba(10, 6, 3, 0.55) 100%
+  );
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+
+@media (max-width: 767px) {
+  .hero-name,
+  .hero-name-dim {
+    display: none;
+  }
+}
+
 .overlay {
   position: fixed;
   inset: 0;

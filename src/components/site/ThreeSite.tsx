@@ -36,6 +36,8 @@ export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps)
   const trackRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<HTMLSpanElement>(null)
   const flashRef = useRef<HTMLDivElement>(null)
+  const nameRef = useRef<HTMLDivElement>(null)
+  const dimRef = useRef<HTMLDivElement>(null)
   const dpr = quality === 'full' ? 1.8 : 1.25
 
   // Scroll -> journey progress
@@ -113,12 +115,28 @@ export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps)
   // you scroll up again.
   useEffect(() => {
     const el = flashRef.current
+    const name = nameRef.current
+    const dim = dimRef.current
     let last = performance.now()
 
     const tick = () => {
       const now = performance.now()
       smoothScrollStep((now - last) / 1000)
       last = now
+
+      // The restaurant name sits centre-screen on desktop: it appears right
+      // after the loading screen ends and fades out as soon as the user scrolls.
+      // The corridor dims slightly while the name is up.
+      if (name && dim) {
+        const fadeIn = Math.min(1, Math.max(0, scrollState.intro / 0.2))
+        const fadeOut = 1 - Math.min(1, Math.max(0, scrollState.smooth / 0.02))
+        const o = fadeIn * fadeOut
+        name.style.opacity = String(o)
+        name.style.visibility = o > 0.001 ? 'visible' : 'hidden'
+        dim.style.opacity = String(o * 0.35)
+        dim.style.visibility = o > 0.001 ? 'visible' : 'hidden'
+      }
+
       if (reduced || !el) return
       const t = Math.min(
         1,
@@ -170,6 +188,17 @@ export function ThreeSite({ quality, reduced, active, onReady }: ThreeSiteProps)
 
       <div className="journey-progress" aria-hidden="true">
         <span ref={progressRef} />
+      </div>
+
+      <div className="hero-name-dim" ref={dimRef} aria-hidden="true" />
+
+      <div className="hero-name" ref={nameRef} aria-hidden="true">
+        <img
+          className="hero-name__img"
+          src="/name.png"
+          alt=""
+          draggable={false}
+        />
       </div>
 
       <div className="flash" ref={flashRef} aria-hidden="true" />
