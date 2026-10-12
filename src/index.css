@@ -2047,8 +2047,8 @@ a:hover {
   color: var(--ink);
 }
 
-/* --- Header ------------------------------------------------------ */
-.app-header {
+/* --- Ordering-page nav (logo + square menu) ---------------------- */
+.order-nav {
   position: sticky;
   top: 0;
   z-index: 50;
@@ -2056,125 +2056,38 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem clamp(1rem, 4vw, 2.5rem);
-  background: rgba(246, 236, 217, 0.92);
-  backdrop-filter: blur(8px);
+  height: 88px;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+  background: var(--cream);
   border-bottom: 1px solid var(--line);
 }
 
-.app-header__brand {
+.order-nav__brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
   text-decoration: none;
-  color: var(--ink);
 }
 
-.app-header__mark {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-sm);
-  background: var(--brand);
-  color: var(--cream);
-  font-family: var(--font-kn);
-  font-size: var(--fs-2);
+.order-nav__logo {
+  height: 40px;
+  width: auto;
+  display: block;
 }
 
-.app-header__name {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--font-display);
-  font-size: var(--fs-2);
-  line-height: 1.05;
-}
-
-.app-header__name small {
-  font-family: var(--font-kn);
-  font-size: var(--fs-4);
-  color: var(--ink-dim);
-}
-
-.app-header__nav {
-  display: flex;
-  gap: 1.75rem;
-}
-
-.app-header__link {
-  color: var(--ink);
-  text-decoration: none;
-  font-size: var(--fs-4);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding-bottom: 3px;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.app-header__link.is-active,
-.app-header__link:hover {
-  border-bottom-color: var(--brand);
-}
-
-.app-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.app-header__order {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.55rem 1.25rem;
-  border-radius: var(--radius-pill);
-  background: var(--brand);
-  color: var(--cream);
-  text-decoration: none;
-  font-size: var(--fs-4);
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.app-header__order:hover {
-  background: var(--brand-dark);
-  transform: translateY(-1px);
-}
-
-.app-header__cart {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--ink);
-  text-decoration: none;
-  font-size: var(--fs-4);
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.app-header__cart-count {
-  display: grid;
-  place-items: center;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 5px;
-  border-radius: var(--radius-pill);
-  background: var(--gold-deep);
-  color: #fff;
-  font-size: var(--fs-4);
-  letter-spacing: 0;
+/* The square nav sits inside the bar rather than fixed to the viewport. */
+.order-nav .real-square {
+  position: static;
+  top: auto;
+  left: auto;
+  margin: 0;
+  flex: none;
 }
 
 /* --- Page shell -------------------------------------------------- */
 .page {
   max-width: var(--container);
   margin: 0 auto;
-  padding: clamp(6.5rem, 8vw, 4.5rem) clamp(1rem, 4vw, 2.5rem) 5rem;
+  padding: clamp(2.25rem, 5vw, 3.25rem) clamp(1rem, 4vw, 2.5rem) 5rem;
 }
 
 .page-head {
@@ -2284,7 +2197,7 @@ a:hover {
 
 .cat-nav {
   position: sticky;
-  top: 0;
+  top: 88px;
   z-index: 40;
   display: flex;
   gap: 0.6rem;
@@ -3054,12 +2967,12 @@ a:hover {
 }
 
 @media (max-width: 720px) {
-  .app-header__nav {
-    display: none;
+  .order-nav {
+    height: 72px;
   }
 
-  .app-header__name small {
-    display: none;
+  .order-nav__logo {
+    height: 32px;
   }
 
   .modes {
@@ -3067,7 +2980,7 @@ a:hover {
   }
 
   .cat-nav {
-    top: 0;
+    top: 72px;
   }
 
   .cart-line {
@@ -3105,10 +3018,6 @@ a:hover {
 }
 
 @media (max-width: 520px) {
-  .app-header__order {
-    padding: 0.5rem 0.9rem;
-  }
-
   .item-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 0.9rem;
@@ -3132,7 +3041,7 @@ a:hover {
 
 /* --- Print: bill only -------------------------------------------- */
 @media print {
-  .app-header,
+  .order-nav,
   .no-print,
   .confirmation-actions {
     display: none !important;

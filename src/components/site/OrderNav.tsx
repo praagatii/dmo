@@ -1,6 +1,6 @@
-// Standalone square navigation for the ordering pages. Visually and
-// behaviourally identical to the homepage hero nav: the green square expands
-// into the full-screen menu with Home / Menu / Our Story / Locations.
+// Ordering-page chrome: the same square navigation as the homepage (green
+// square expands into the full-screen menu) together with the centre logo, so
+// every page shows the brand beside the existing nav.
 import { useEffect, useState } from 'react'
 import { navigate, navigateToSection } from '../../lib/router'
 import {
@@ -31,15 +31,34 @@ export function OrderNav() {
 
   return (
     <>
-      <button
-        type="button"
-        className="real-square"
-        style={
-          open ? { transform: `scale(${menuScale})`, borderRadius: 0 } : undefined
-        }
-        onClick={() => setOpen((v) => !v)}
-        aria-label="menu"
-      />
+      <header className="order-nav">
+        <a
+          className="order-nav__brand"
+          href="#/"
+          aria-label="Dodda Mane Oota — home"
+          onClick={(e) => {
+            e.preventDefault()
+            navigate('/')
+          }}
+        >
+          <img
+            src="/centre-logo.png"
+            alt="Dodda Mane Oota"
+            className="order-nav__logo"
+          />
+        </a>
+        <button
+          type="button"
+          className="real-square"
+          style={
+            open
+              ? { transform: `scale(${menuScale})`, borderRadius: 0 }
+              : undefined
+          }
+          onClick={() => setOpen((v) => !v)}
+          aria-label="menu"
+        />
+      </header>
       {open && <SquareMenuOverlay onPick={pick} onClose={() => setOpen(false)} />}
     </>
   )
