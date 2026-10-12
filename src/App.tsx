@@ -4,7 +4,7 @@ import { useRoute, Link } from './lib/router'
 import { CartProvider } from './lib/cart'
 import { RealHome } from './components/site/RealHome'
 import { Loader } from './components/site/Loader'
-import { OrderNav } from './components/site/OrderNav'
+import { SiteNav } from './components/site/SiteNav'
 import { SiteFooter } from './components/site/SiteFooter'
 import { OrderPage } from './components/order/OrderPage'
 import { CartPage } from './components/order/CartPage'
@@ -99,6 +99,7 @@ function HomeRoute() {
 
   return (
     <>
+      <SiteNav />
       <RealHome playIntro={!introDone && !via3D} />
       <SiteFooter />
       {via3D && <IntroReveal />}
@@ -149,7 +150,7 @@ function Shell() {
 
   return (
     <div className="app-shell">
-      <OrderNav />
+      <SiteNav />
       {renderRoute(route)}
       <SiteFooter />
     </div>
