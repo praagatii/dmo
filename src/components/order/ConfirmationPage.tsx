@@ -84,32 +84,34 @@ export function ConfirmationPage() {
           )}
         </div>
 
-        <table className="bill__table">
-          <thead>
-            <tr>
-              <th scope="col">Item</th>
-              <th scope="col" className="bill__num">
-                Qty
-              </th>
-              <th scope="col" className="bill__num">
-                Unit
-              </th>
-              <th scope="col" className="bill__num">
-                Amount
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {order.lines.map((l, i) => (
-              <tr key={`${l.name}-${i}`}>
-                <td>{l.name}</td>
-                <td className="bill__num">{l.qty}</td>
-                <td className="bill__num">{inr(l.price)}</td>
-                <td className="bill__num">{inr(l.price * l.qty)}</td>
+        <div className="bill__table-wrap">
+          <table className="bill__table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col" className="bill__num">
+                  Qty
+                </th>
+                <th scope="col" className="bill__num">
+                  Unit
+                </th>
+                <th scope="col" className="bill__num">
+                  Amount
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {order.lines.map((l, i) => (
+                <tr key={`${l.name}-${i}`}>
+                  <td>{l.name}</td>
+                  <td className="bill__num">{l.qty}</td>
+                  <td className="bill__num">{inr(l.price)}</td>
+                  <td className="bill__num">{inr(l.price * l.qty)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <div className="bill__totals">
           <div className="bill__total-row">

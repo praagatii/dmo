@@ -72,6 +72,8 @@ html {
   background: var(--bg);
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html::-webkit-scrollbar {
@@ -88,6 +90,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1,
@@ -3048,6 +3051,16 @@ a:hover {
 }
 
 @media (max-width: 720px) {
+  /* Clear the fixed centre logo + square nav (the square reaches ~88px). */
+  .page {
+    padding-top: 6.5rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .cat-section {
+    scroll-margin-top: 84px;
+  }
+
   .modes {
     grid-template-columns: 1fr;
   }
@@ -3109,6 +3122,94 @@ a:hover {
 
   .bill__meta p {
     justify-content: flex-start;
+  }
+}
+
+/* --- Mobile refinements (small phones) --------------------------- */
+@media (max-width: 640px) {
+  /* The hero wordmark is sized in vw and would clip on narrow screens. */
+  .real-hero-text {
+    width: min(88vw, 58vh);
+  }
+
+  .rs-section {
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+  }
+
+  /* Stack the ambience mosaic; the 2-column 15rem rows get too cramped. */
+  .ambience-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    gap: 0.9rem;
+    margin-top: 2rem;
+  }
+
+  .ambience-item,
+  .ambience-item--wide {
+    grid-row: auto;
+    height: 13.5rem;
+  }
+
+  .ambience-item--wide {
+    height: 17rem;
+  }
+
+  .guest-placeholder {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .bill {
+    padding: 1.5rem 1.1rem;
+  }
+
+  .bill__customer {
+    gap: 1.25rem;
+  }
+
+  .bill__table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .bill__table {
+    min-width: 22rem;
+  }
+
+  .demo-banner {
+    padding: 0.85rem 1rem;
+  }
+
+  .confirmation-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .confirmation-actions .btn {
+    width: 100%;
+  }
+
+  /* Comfortable touch targets. */
+  .qty button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cat-nav__chip {
+    padding: 0.6rem 1.1rem;
+  }
+
+  .item-card__add {
+    padding: 0.6rem 1.3rem;
+  }
+
+  /* Keep floating UI and footers clear of the home-indicator area. */
+  .cart-banner {
+    bottom: max(1.25rem, env(safe-area-inset-bottom));
+  }
+
+  .rs-footer {
+    padding-bottom: calc(1.75rem + env(safe-area-inset-bottom));
   }
 }
 
