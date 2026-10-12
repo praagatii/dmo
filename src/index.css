@@ -2047,47 +2047,12 @@ a:hover {
   color: var(--ink);
 }
 
-/* --- Ordering-page nav (logo + square menu) ---------------------- */
-.order-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  height: 88px;
-  padding: 0 clamp(1rem, 4vw, 2.5rem);
-  background: var(--cream);
-  border-bottom: 1px solid var(--line);
-}
-
-.order-nav__brand {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.order-nav__logo {
-  height: 40px;
-  width: auto;
-  display: block;
-}
-
-/* The square nav sits inside the bar rather than fixed to the viewport. */
-.order-nav .real-square {
-  position: static;
-  top: auto;
-  left: auto;
-  margin: 0;
-  flex: none;
-}
-
 /* --- Page shell -------------------------------------------------- */
 .page {
   max-width: var(--container);
   margin: 0 auto;
-  padding: clamp(2.25rem, 5vw, 3.25rem) clamp(1rem, 4vw, 2.5rem) 5rem;
+  /* Clears the fixed centre logo that sits at the top of every page. */
+  padding: clamp(3rem, 12vw, 12rem) clamp(1rem, 4vw, 2.5rem) 5rem;
 }
 
 .page-head {
@@ -2197,7 +2162,7 @@ a:hover {
 
 .cat-nav {
   position: sticky;
-  top: 88px;
+  top: 0;
   z-index: 40;
   display: flex;
   gap: 0.6rem;
@@ -2967,20 +2932,12 @@ a:hover {
 }
 
 @media (max-width: 720px) {
-  .order-nav {
-    height: 72px;
-  }
-
-  .order-nav__logo {
-    height: 32px;
-  }
-
   .modes {
     grid-template-columns: 1fr;
   }
 
   .cat-nav {
-    top: 72px;
+    top: 0;
   }
 
   .cart-line {
@@ -3041,7 +2998,8 @@ a:hover {
 
 /* --- Print: bill only -------------------------------------------- */
 @media print {
-  .order-nav,
+  .real-square,
+  .real-logo-wrap,
   .no-print,
   .confirmation-actions {
     display: none !important;

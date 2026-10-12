@@ -1,6 +1,6 @@
-// Ordering-page chrome: the same square navigation as the homepage (green
-// square expands into the full-screen menu) together with the centre logo, so
-// every page shows the brand beside the existing nav.
+// Ordering-page chrome — identical to the homepage: the centre logo stays at
+// the top and the green square nav stays in the middle, opening the same
+// full-screen menu (Home / Menu / Our Story / Locations).
 import { useEffect, useState } from 'react'
 import { navigate, navigateToSection } from '../../lib/router'
 import {
@@ -31,34 +31,21 @@ export function OrderNav() {
 
   return (
     <>
-      <header className="order-nav">
-        <a
-          className="order-nav__brand"
-          href="#/"
-          aria-label="Dodda Mane Oota — home"
-          onClick={(e) => {
-            e.preventDefault()
-            navigate('/')
-          }}
-        >
-          <img
-            src="/centre-logo.png"
-            alt="Dodda Mane Oota"
-            className="order-nav__logo"
-          />
-        </a>
-        <button
-          type="button"
-          className="real-square"
-          style={
-            open
-              ? { transform: `scale(${menuScale})`, borderRadius: 0 }
-              : undefined
-          }
-          onClick={() => setOpen((v) => !v)}
-          aria-label="menu"
-        />
-      </header>
+      <div
+        className={`real-logo-wrap${open ? ' real-logo-wrap--hidden' : ''}`}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <img src="/centre-logo.png" alt="centre logo" className="centre-logo" />
+      </div>
+      <button
+        type="button"
+        className="real-square"
+        style={
+          open ? { transform: `scale(${menuScale})`, borderRadius: 0 } : undefined
+        }
+        onClick={() => setOpen((v) => !v)}
+        aria-label="menu"
+      />
       {open && <SquareMenuOverlay onPick={pick} onClose={() => setOpen(false)} />}
     </>
   )
