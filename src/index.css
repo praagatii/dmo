@@ -2113,6 +2113,16 @@ a:hover {
   background: var(--brand-dark);
 }
 
+/* Burgundy action button — used for payment / place-order calls to action. */
+.btn--pay {
+  background: var(--burgundy);
+  color: var(--cream);
+}
+
+.btn--pay:hover {
+  background: #38150f;
+}
+
 .btn--ghost {
   background: transparent;
   border-color: var(--line-strong);
@@ -2667,6 +2677,105 @@ a:hover {
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: var(--fs-4);
   color: var(--ink-soft);
+}
+
+/* --- Payment screen ---------------------------------------------- */
+.pay-secure {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.35rem;
+  font-size: var(--fs-4);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.pay-methods {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.pay-note {
+  margin: 0;
+  font-size: var(--fs-4);
+  color: var(--ink-dim);
+}
+
+.pay-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: var(--fs-4);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.pay-check input {
+  margin-top: 0.2rem;
+  accent-color: var(--burgundy);
+}
+
+.pay-failed {
+  margin-bottom: 1.25rem;
+  padding: 0.95rem 1.15rem;
+  border-left: 3px solid var(--terracotta-deep);
+  background: rgba(143, 58, 32, 0.1);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: var(--fs-4);
+  color: var(--ink-soft);
+}
+
+.pay-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.pay-state--ok {
+  border-color: var(--brand);
+  background: rgba(23, 59, 46, 0.06);
+}
+
+.pay-state__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-2);
+}
+
+.pay-state__sub {
+  margin: 0 0 0.5rem;
+  color: var(--ink-soft);
+  font-size: var(--fs-4);
+}
+
+.pay-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgba(23, 59, 46, 0.18);
+  border-top-color: var(--burgundy);
+  animation: pay-spin 0.8s linear infinite;
+}
+
+@keyframes pay-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.summary__ref {
+  margin: -0.5rem 0 1rem;
+  font-size: var(--fs-4);
+  color: var(--ink-dim);
 }
 
 /* --- Confirmation / bill ----------------------------------------- */

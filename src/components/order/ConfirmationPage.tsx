@@ -37,9 +37,12 @@ export function ConfirmationPage() {
   return (
     <main className="page page--confirmation">
       <div className="demo-banner no-print">
-        <strong>Development demo.</strong> This order was not sent to the
-        kitchen and no payment was taken. It demonstrates the confirmation and
-        bill flow only.
+        <strong>Development demo.</strong>{' '}
+        {order.paymentStatus === 'paid'
+          ? 'A simulated online payment was recorded. No real money was charged and'
+          : 'This is a pay-on-delivery order. Payment is due when you collect and'}{' '}
+        the order was not sent to the kitchen. It demonstrates the confirmation
+        and bill flow only.
       </div>
 
       <section className="bill" aria-label="Order bill">
@@ -125,10 +128,28 @@ export function ConfirmationPage() {
 
         <div className="bill__footer">
           <p>
-            Payment: <span className="summary__muted">Not processed (demo)</span>
+            Payment:{' '}
+            <strong>
+              {order.paymentMethod === 'online'
+                ? 'Paid online (demo)'
+                : 'Pay on delivery'}
+            </strong>
           </p>
           <p>
-            Status: <strong>Demo order — not sent to kitchen</strong>
+            Status:{' '}
+            <strong>
+              {order.paymentStatus === 'paid'
+                ? 'Demo Payment Successful'
+                : 'Payment Due on Delivery'}
+            </strong>
+          </p>
+          {order.txnRef && (
+            <p>
+              Transaction: <strong>{order.txnRef}</strong>
+            </p>
+          )}
+          <p>
+            Kitchen: <span className="summary__muted">Not notified (demo)</span>
           </p>
           <p className="bill__address">
             {v.address}, {v.area}, {v.city} {v.pincode} · {v.phoneDisplay}

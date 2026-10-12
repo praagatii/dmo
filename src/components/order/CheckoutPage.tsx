@@ -2,7 +2,13 @@ import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { useCart } from '../../lib/cart'
 import { inr } from '../../lib/format'
 import { Link, navigate } from '../../lib/router'
-import { saveOrder, makeOrderRef, type PlacedOrder } from '../../lib/order'
+import {
+  saveOrder,
+  makeOrderRef,
+  type PlacedOrder,
+  type PaymentMethod,
+} from '../../lib/order'
+import { readCheckoutDraft, saveCheckoutDraft, clearCheckoutDraft } from '../../lib/checkout'
 
 // Delivery availability is not confirmed by the restaurant, so it is shown but
 // clearly flagged as unconfirmed. Flip this only once delivery is verified.
@@ -14,8 +20,21 @@ const EMPTY = { name: '', phone: '', email: '', address: '', notes: '' }
 
 export function CheckoutPage() {
   const { lines, subtotal, count, clear } = useCart()
-  const [mode, setMode] = useState<Mode>('pickup')
-  const [form, setForm] = useState(EMPTY)
+  // Restore any details captured before a trip to the payment screen.
+  const draft = readCheckoutDraft()
+  const [mode, setMode] = useState<Mode>(draft?.mode ?? 'pickup')
+  const [payment, setPayment] = useState<PaymentMethod>(draft?.payment ?? 'online')
+  const [form, setForm] = useState(() =>
+    draft
+      ? {
+          name: draft.name,
+          phone: draft.phone,
+          email: draft.email,
+          address: draft.address,
+          notes: draft.notes,
+        }
+      : EMPTY,
+  )
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   if (count === 0) {
@@ -62,22 +81,44 @@ export function CheckoutPage() {
         ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
-    const order: PlacedOrder = {
-      ref: makeOrderRef(),
+
+    const clean = {
       name: form.name.trim(),
       phone: form.phone.trim(),
-      email: form.email.trim() || undefined,
+      email: form.email.trim(),
       mode,
-      address: mode === 'delivery' ? form.address.trim() : undefined,
+      address: mode === 'delivery' ? form.address.trim() : '',
+      notes: form.notes.trim(),
+    }
+
+    // Remember the details for the (possibly multi-step) payment journey.
+    saveCheckoutDraft({ ...clean, payment })
+
+    if (payment === 'online') {
+      // Hand off to the demo payment screen; the cart stays intact.
+      navigate('/payment')
+      return
+    }
+
+    // Pay on delivery: record the order with payment still due.
+    const order: PlacedOrder = {
+      ref: makeOrderRef(),
+      name: clean.name,
+      phone: clean.phone,
+      email: clean.email || undefined,
+      mode: clean.mode,
+      address: clean.mode === 'delivery' ? clean.address : undefined,
+      notes: clean.notes || undefined,
       lines: lines.map((l) => ({ name: l.name, qty: l.qty, price: l.price })),
       subtotal,
       total,
       at: new Date().toISOString(),
       demo: true,
+      paymentMethod: 'cod',
+      paymentStatus: 'due',
     }
     saveOrder(order)
-    // No backend or payment is wired up, so this is an explicitly-labelled
-    // demo confirmation — never a claim of a real order.
+    clearCheckoutDraft()
     clear()
     navigate('/order/confirmation')
   }
@@ -196,14 +237,44 @@ export function CheckoutPage() {
             </label>
           </fieldset>
 
+          <fieldset className="fieldset">
+            <legend>Payment</legend>
+            <div className="modes">
+              <label
+                className={`mode${payment === 'online' ? ' is-active' : ''}`}
+              >
+                <input
+                  type="radio"
+                  name="payment"
+                  checked={payment === 'online'}
+                  onChange={() => setPayment('online')}
+                />
+                <span className="mode__title">Pay online</span>
+                <span className="mode__note">Demo payment screen</span>
+              </label>
+              <label className={`mode${payment === 'cod' ? ' is-active' : ''}`}>
+                <input
+                  type="radio"
+                  name="payment"
+                  checked={payment === 'cod'}
+                  onChange={() => setPayment('cod')}
+                />
+                <span className="mode__title">Pay on delivery</span>
+                <span className="mode__note">Settle when you collect</span>
+              </label>
+            </div>
+          </fieldset>
+
           <p className="checkout-notice">
-            <strong>Demo checkout.</strong> No payment is taken and no order is
-            sent to the kitchen — this screen demonstrates the ordering flow so
-            a real backend and payment provider can be connected later.
+            <strong>Demo checkout.</strong> No real payment is taken and no order
+            is sent to the kitchen — this screen demonstrates the ordering flow
+            so a real backend and payment provider can be connected later.
           </p>
 
-          <button type="submit" className="btn btn--primary btn--block">
-            Place order (demo)
+          <button type="submit" className="btn btn--pay btn--block">
+            {payment === 'online'
+              ? `Continue to payment · ${inr(total)}`
+              : 'Place order (pay on delivery)'}
           </button>
         </form>
 
@@ -232,8 +303,9 @@ export function CheckoutPage() {
             <span>{inr(total)}</span>
           </div>
           <p className="summary__note">
-            Payment method and status will be shown here once a payment
-            provider is connected.
+            {payment === 'online'
+              ? 'You will complete a simulated payment on the next screen.'
+              : 'Payment will be collected on delivery (pay on delivery).'}
           </p>
           <Link to="/cart" className="btn btn--ghost btn--block">
             Back to cart

@@ -9,6 +9,7 @@ import { SiteFooter } from './components/site/SiteFooter'
 import { OrderPage } from './components/order/OrderPage'
 import { CartPage } from './components/order/CartPage'
 import { CheckoutPage } from './components/order/CheckoutPage'
+import { PaymentPage } from './components/order/PaymentPage'
 import { ConfirmationPage } from './components/order/ConfirmationPage'
 
 // The 3D experience (three.js + R3F) is code-split so that devices that
@@ -130,6 +131,8 @@ function renderRoute(route: string) {
       return <CartPage />
     case '/checkout':
       return <CheckoutPage />
+    case '/payment':
+      return <PaymentPage />
     case '/order/confirmation':
       return <ConfirmationPage />
     default:
