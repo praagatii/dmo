@@ -74,9 +74,11 @@ export const DEPTH = {
    * How far (world units) the nearest depth value (white) is pulled from the
    * base toward the camera. Kept small: enough relief for the hallway to
    * parallax convincingly as the cursor moves, without re-projecting the
-   * image so far it warps the flat reference look.
+   * image so far it warps the flat reference look or, because the near floor
+   * sits at the bottom, pushing the ground down the frame (which reads as the
+   * camera lifting off as you dolly in).
    */
-  amplitude: 3.5,
+  amplitude: 2,
   /** Grid segments across the image width (height is derived from aspect). */
   segments: 192,
   /** Resolution at which the depth map is sampled to build geometry. */
