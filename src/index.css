@@ -1737,6 +1737,103 @@ a:hover {
   color: var(--ink-soft);
 }
 
+/* --- Branches (compact mini cards) ------------------------------- */
+.branch-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.branch-mini {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.branch-mini__thumb {
+  display: block;
+  flex: none;
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.branch-mini__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.branch-mini__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-3);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.branch-mini__addr,
+.branch-mini__hours {
+  margin: 0;
+  font-size: var(--fs-4);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.branch-mini__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.9rem;
+  margin-top: 0.15rem;
+  font-size: var(--fs-4);
+}
+
+.branch-mini__links a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.branch-mini__links a:hover {
+  text-decoration: underline;
+}
+
+.branch-mini__order {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--fs-4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.branch-mini__order:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.branch-soon-note {
+  margin: 1.25rem auto 0;
+  max-width: 40rem;
+  text-align: center;
+  font-size: var(--fs-4);
+  color: var(--ink-soft);
+}
+
 /* --- Ambience / The Experience ---------------------------------- */
 .ambience-grid {
   display: grid;

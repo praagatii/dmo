@@ -7,7 +7,7 @@ import { Link } from '../../lib/router'
 export function SiteFooter() {
   const v = restaurant.verified
   return (
-    <footer className="rs-footer">
+    <footer className="rs-footer" id="contact">
       <div className="rs-container">
         <div className="rs-footer-grid">
           <div className="rs-footer-col rs-footer-brand">
@@ -33,10 +33,10 @@ export function SiteFooter() {
             <p className="rs-footer-heading">Explore</p>
             <ul className="rs-footer-list">
               <li>
-                <Link to="/about">About</Link>
+                <Link to="/" section="story">Our Story</Link>
               </li>
               <li>
-                <Link to="/branches">Branches</Link>
+                <Link to="/" section="locations">Locations</Link>
               </li>
               <li>
                 <Link to="/order">Order</Link>

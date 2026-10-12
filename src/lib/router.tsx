@@ -41,14 +41,34 @@ export function navigate(to: string) {
   window.location.hash = target
 }
 
+/** Navigate to a route, then smooth-scroll to a section id on that route. */
+export function navigateToSection(to: string, section: string) {
+  const target = to.startsWith('/') ? to : `/${to}`
+  const scroll = () => {
+    document.getElementById(section)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
+  if (getPath() === target) {
+    scroll()
+    return
+  }
+  window.location.hash = target
+  // Wait for the hashchange render before scrolling to the new element.
+  window.setTimeout(scroll, 90)
+}
+
 export function Link({
   to,
+  section,
   className,
   children,
   onClick,
   'aria-label': ariaLabel,
 }: {
   to: string
+  section?: string
   className?: string
   children: ReactNode
   onClick?: () => void
@@ -61,10 +81,19 @@ export function Link({
       aria-label={ariaLabel}
       onClick={(e: MouseEvent) => {
         onClick?.()
-        // If already on the target, re-scroll to top.
+        // If already on the target, re-scroll to top (or to the section).
         if (getPath() === to) {
           e.preventDefault()
-          window.scrollTo({ top: 0, behavior: 'smooth' })
+          if (section) {
+            document
+              .getElementById(section)
+              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }
+        } else if (section) {
+          e.preventDefault()
+          navigateToSection(to, section)
         }
       }}
     >

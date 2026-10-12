@@ -1,11 +1,10 @@
 // ---------------------------------------------------------------------------
 // BRANCH DATA
 // ---------------------------------------------------------------------------
-// Single source of truth for Doddmane Oota branches, shared by the homepage
-// "Our Branches" section and the dedicated /branches page.
-//
-// Only the KR Puram kitchen is verified (see src/data/restaurant.ts). Do NOT
-// invent additional branches or addresses — add real ones here as they open.
+// Single source of truth for Doddmane Oota branches, shown as a compact
+// card row on the homepage. Only the KR Puram kitchen is verified (see
+// src/data/restaurant.ts). Do NOT invent additional branches or addresses —
+// add real ones here as they open.
 // ---------------------------------------------------------------------------
 
 import { restaurant } from './restaurant'

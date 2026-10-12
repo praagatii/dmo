@@ -10,8 +10,6 @@ import { OrderPage } from './components/order/OrderPage'
 import { CartPage } from './components/order/CartPage'
 import { CheckoutPage } from './components/order/CheckoutPage'
 import { ConfirmationPage } from './components/order/ConfirmationPage'
-import { AboutPage } from './components/pages/AboutPage'
-import { BranchesPage } from './components/pages/BranchesPage'
 
 // The 3D experience (three.js + R3F) is code-split so that devices that
 // fall back to the static site never download the heavy bundle.
@@ -48,7 +46,9 @@ function IntroReveal() {
   return <div ref={ref} className="intro-reveal" aria-hidden="true" />
 }
 
-// The homepage is the only route that can host the 3D intro.
+// The homepage hosts the one-shot 3D intro; once it has played (or the device
+// can't render it) the same global chrome as /order is used, so the homepage
+// and the ordering flow always share one navigation bar.
 function HomeRoute() {
   const capability = useCapability()
   const [choice, setChoice] = useState<'3d' | '2d' | null>(null)
@@ -100,6 +100,7 @@ function HomeRoute() {
   return (
     <>
       <RealHome playIntro={!introDone && !via3D} />
+      <SiteFooter />
       {via3D && <IntroReveal />}
     </>
   )
@@ -119,12 +120,10 @@ function NotFound() {
   )
 }
 
+// The site is a single long homepage; the ordering flow is its only other
+// route, rendered inside the same global chrome.
 function renderRoute(route: string) {
   switch (route) {
-    case '/about':
-      return <AboutPage />
-    case '/branches':
-      return <BranchesPage />
     case '/order':
       return <OrderPage />
     case '/cart':

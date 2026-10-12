@@ -1,26 +1,28 @@
 // Real Doddmane home — ported from ragwhoo/doddamane (Next.js) into this Vite
 // app. Home hero (herobg parallax zoom + leaf reveal + centre logo + text.png)
-// with the dark green nav-square that expands into the full-screen menu.
+// with the dark green nav-square that expands into a full-screen menu.
 //
-// Navigation now drives the app router: Home / About / Branches are pages and
-// Order now opens the full ordering experience (never a scroll to a section).
+// Navigation items reflect the current site structure: Home + Menu are
+// routes (Menu is the only separate page), while Our Story and Locations are
+// sections on the homepage that the menu smooth-scrolls to.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
-import { navigate } from '../../lib/router'
+import { navigate, navigateToSection } from '../../lib/router'
 import RealSections from './RealSections'
 
 const STAGGER = 0.035
 
 interface NavItem {
   name: string
-  to: string
+  to?: string
+  section?: string
 }
 
 const NAV_ITEMS: NavItem[] = [
   { name: 'Home', to: '/' },
-  { name: 'About', to: '/about' },
-  { name: 'Branches', to: '/branches' },
-  { name: 'Order', to: '/order' },
+  { name: 'Menu', to: '/order' },
+  { name: 'Our Story', section: 'story' },
+  { name: 'Locations', section: 'locations' },
 ]
 
 function TextRoll({ children }: { children: string }) {
@@ -59,7 +61,7 @@ function MenuOverlay({
   onPick,
   onClose,
 }: {
-  onPick: (to: string) => void
+  onPick: (item: NavItem) => void
   onClose: () => void
 }) {
   return (
@@ -72,12 +74,12 @@ function MenuOverlay({
     >
       <ul className="real-menu-list">
         {NAV_ITEMS.map((item) => (
-          <li key={item.to} className="real-menu-item">
+          <li key={item.name} className="real-menu-item">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation()
-                onPick(item.to)
+                onPick(item)
               }}
             >
               <TextRoll>{item.name}</TextRoll>
@@ -179,9 +181,10 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
     return () => ctx.revert()
   }, [playIntro])
 
-  const pick = (to: string) => {
+  const pick = (item: NavItem) => {
     setOpen(false)
-    navigate(to)
+    if (item.section) navigateToSection('/', item.section)
+    else if (item.to) navigate(item.to)
   }
 
   return (
@@ -230,7 +233,9 @@ export function RealHome({ playIntro = true }: { playIntro?: boolean }) {
         aria-label="menu"
       />
 
-      {open && <MenuOverlay onPick={pick} onClose={() => setOpen(false)} />}
+      {open && (
+        <MenuOverlay onPick={pick} onClose={() => setOpen(false)} />
+      )}
     </main>
   )
 }

@@ -1,12 +1,11 @@
-// Homepage sections below the hero. Order: Our Story → Our Branches →
-// Ambience → Featured Guests → Footer. All content is verified data from
-// src/data (restaurant.ts, branches.ts) — nothing invented. The homepage menu
-// belongs to the dedicated ordering experience, not here.
+// Homepage sections below the hero. Order: Our Story → Our Locations →
+// Ambience → Featured Guests. All content is verified data from src/data
+// (restaurant.ts, branches.ts) — nothing invented. The homepage footer is
+// rendered by the app shell (App.tsx) so every page shares the same chrome.
+// The homepage menu belongs to the dedicated ordering experience, not here.
 import { restaurant, navSections } from '../../data/restaurant'
 import { branches } from '../../data/branches'
 import { Link } from '../../lib/router'
-import { BranchCard } from './BranchCard'
-import { SiteFooter } from './SiteFooter'
 
 interface Props {
   onOrder: () => void
@@ -41,28 +40,48 @@ export default function RealSections({ onOrder }: Props) {
         </div>
       </section>
 
-      <section id="branches" className="rs-section rs-white">
+      <section id="locations" className="rs-section rs-white">
         <div className="rs-container">
           <div className="rs-head rs-center">
-            <p className="rs-label">ಶಾಖೆಗಳು · 02 — Our Branches</p>
-            <h2 className="rs-title">The big-house meal, wherever you are.</h2>
+            <p className="rs-label">ಶಾಖೆಗಳು · 02 — Our Locations</p>
+            <h2 className="rs-title">A small list, for now.</h2>
             <p className="rs-lead">
               Our kitchen in {v.area} serves the oota every day. More branches
               will appear here as they open.
             </p>
           </div>
-          <div className="branch-grid">
+          <div className="branch-mini-grid">
             {branches.map((branch) => (
-              <BranchCard key={branch.id} branch={branch} onOrder={onOrder} />
+              <div className="branch-mini" key={branch.id}>
+                <img
+                  className="branch-mini__thumb"
+                  src={branch.image}
+                  alt={branch.name}
+                  loading="lazy"
+                />
+                <div className="branch-mini__body">
+                  <h3 className="branch-mini__name">{branch.name}</h3>
+                  <p className="branch-mini__addr">
+                    {branch.address}, {branch.city}
+                  </p>
+                  <p className="branch-mini__hours">Open daily, {branch.hours}</p>
+                  <div className="branch-mini__links">
+                    <a href={`tel:${branch.phoneHref}`}>{branch.phoneDisplay}</a>
+                    <a href={branch.mapUrl} target="_blank" rel="noreferrer">
+                      Directions ↗
+                    </a>
+                  </div>
+                  <button type="button" className="branch-mini__order" onClick={onOrder}>
+                    Order now →
+                  </button>
+                </div>
+              </div>
             ))}
-            <aside className="branch-soon">
-              <h3 className="branch-soon__title">More branches coming soon</h3>
-              <p className="branch-soon__text">
-                Our next Doddmane Oota kitchens will be listed here as they
-                open. Follow along for announcements.
-              </p>
-            </aside>
           </div>
+          <p className="branch-soon-note">
+            More branches coming soon — our next Doddmane Oota kitchens will be
+            listed here as they open.
+          </p>
         </div>
       </section>
 
@@ -128,8 +147,6 @@ export default function RealSections({ onOrder }: Props) {
           </div>
         </div>
       </section>
-
-      <SiteFooter />
     </>
   )
 }
