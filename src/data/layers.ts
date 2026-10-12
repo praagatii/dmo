@@ -15,7 +15,7 @@ export interface LayerDef {
   depth: string
   /** What the layer depicts. */
   role: string
-  /** World-space z of the doorway (far end of the corridor). */
+  /** World-space depth. Camera starts at z = CORRIDOR.cameraStartZ (0). */
   z: number
   /** Original filename (provenance). */
   source: string
@@ -26,8 +26,8 @@ export const LAYERS: LayerDef[] = [
     id: 'BG',
     file: '/bg1.png',
     depth: '/bgdm1.png',
-    role: 'Golden Heritage Hallway (depth-extruded corridor)',
-    z: -50,
+    role: 'Golden Heritage Hallway (single image displaced by its depth map)',
+    z: -40,
     source: 'bg1.png',
   },
 ]

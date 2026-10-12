@@ -31,16 +31,15 @@ function readDepthGrid(
 }
 
 /**
- * The hero backdrop: one hallway image mapped onto a depth-extruded grid.
- * The grid sits at `z` (the doorway) and each vertex is pushed toward the
- * camera by its depth value (white = near) times CORRIDOR.tunnelDepth, so the
- * floor, walls and ceiling nearest the viewer come right up to the camera and
- * the doorway recedes far away — a real corridor rather than a flat card.
- * Cursor and scroll become real camera moves through that geometry.
+ * The hero backdrop: one hallway image mapped onto a depth-displaced grid.
+ * The grid sits at `z` and each vertex is pushed toward the camera by its
+ * depth value (white = near), so the doorway recedes while the walls,
+ * columns and floor stand near. Cursor and scroll become real camera moves
+ * through that geometry, giving true per-pixel parallax.
  *
- * Sizing keeps the near rim cover-fitting the frame (PARALLAX.margin), so
- * advancing z never exposes an edge. The colour map is applied with
- * MeshBasicMaterial for byte-exact brightness.
+ * Sizing stays cover-fit (PARALLAX.margin), so pushing z never exposes an
+ * edge. The colour map is applied with MeshBasicMaterial for byte-exact
+ * brightness.
  */
 export function LayerPlane({
   texture,
@@ -52,12 +51,12 @@ export function LayerPlane({
   const canvasAspect = size.width / size.height
 
   const dims = useMemo(() => {
-    // The corridor is sized so its NEAR rim (the floor/walls at the viewer)
-    // fills the frame from the start camera — that rim is what frames the
-    // entrance. The far doorway then recedes to a small opening in the middle.
-    const nearZ = z + CORRIDOR.tunnelDepth
-    const refDist = CORRIDOR.cameraStartZ - nearZ
-    const fillH = CORRIDOR.viewScale * refDist
+    const dist = CORRIDOR.cameraStartZ - z
+    const fillH = CORRIDOR.viewScale * dist
+    // Cover the viewport while preserving the image's own aspect. A plain
+    // fronto-parallel plane stretches the picture whenever the viewport is
+    // wider than the image, so scale up by the larger of the two ratios
+    // instead of widening only the plane.
     const h =
       fillH *
       Math.max(1, canvasAspect / CORRIDOR.imageAspect) *
@@ -66,8 +65,8 @@ export function LayerPlane({
     return { w, h }
   }, [z, canvasAspect])
 
-  // Seat the corridor's vanishing point on the camera's level line (plain
-  // geometry — no filters or post effects). See CORRIDOR.horizonRow.
+  // Seat the corridor's horizon on the camera's level line (plain geometry —
+  // no filters or post effects). See CORRIDOR.horizonRow.
   const yOffset = (CORRIDOR.horizonRow - 0.5) * dims.h
 
   const depth = useMemo(() => {
@@ -93,7 +92,7 @@ export function LayerPlane({
     const gh = data.length / gw
     for (let i = 0; i < pos.count; i++) {
       const d = bilinear(data, uv.getX(i), uv.getY(i), gw, gh)
-      pos.setZ(i, d * CORRIDOR.tunnelDepth)
+      pos.setZ(i, d * DEPTH.amplitude)
     }
     return geo
   }, [dims.w, dims.h, depth])
